@@ -1,0 +1,8 @@
+#ignore those
+pbPlots.c
+pbPlots.h
+pbPlots.o
+supportLib.c
+supportLib.h
+supportLib.o
+Makefile
