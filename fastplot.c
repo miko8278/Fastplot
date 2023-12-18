@@ -2,20 +2,69 @@
 #include "supportLib.h"
 
 int main(){
+	_Bool success;
+	StringReference *errorMessage;
+
+
+	// PLOT POINTS
 	double xs [] = {-2, -1, 0, 1, 2};
 	double ys [] = {2, -1, -2, -1, 2};
-	_Bool success;
 
 	StartArenaAllocator();
+	//
+	// SERIES SETTINGS
+	// settings fuer jeweils einen Graphen...
+	// kann man mehrere von erstellen
+	ScatterPlotSeries *series = GetDefaultScatterPlotSeriesSettings();
+	series->xs = xs;
+	series->xsLength = 5;
+	series->ys = ys;
+	series->ysLength = 5;
+	series->linearInterpolation = true;
+	series->pointType = L"circles";
+	series->pointTypeLength = wcslen(series->pointType);
+	series->lineThickness = 2;
+	series->lineType = L"solid";
+	series->lineTypeLength = wcslen(series->lineType);
+	series->lineThickness = 3;
+	series->color = CreateRGBColor(0.5, 0.5, 0);
 
+	//
+	// SCATTERPLOTSETTINGS
+	//	settings fuer das Koordinatensystem.
+	//	Nur eines.
+	ScatterPlotSettings *settings = GetDefaultScatterPlotSettings();
+	settings->width = 1800;
+	settings->height = 1200;
+	settings->autoBoundaries = false;
+	settings->xMax = 2;
+	settings->xMin = -2;
+	settings->yMax = 5;
+	settings->yMin = -5;
+	settings->autoPadding = true;
+	//settings->xPadding = 100;
+	//settings->yPadding = 100;
+	settings->title = L"Titel von dem Ganzen";
+	settings->titleLength = wcslen(settings->title);
+	settings->xLabel = L"Dies ist ein Xlabel";
+	settings->xLabelLength = wcslen(settings->xLabel);
+	settings->yLabel = L"Dies soll ein Y label sein";
+	settings->yLabelLength = wcslen(settings->yLabel);
+	settings->showGrid = true;
+	ScatterPlotSeries *s [] = {series};
+	settings->scatterPlotSeries = s;
+	settings->scatterPlotSeriesLength = 1;
+
+	//Create canvas to draw on
 	RGBABitmapImageReference *canvasReference = CreateRGBABitmapImageReference();
-	StringReference *errorMessage = CreateStringReference(L"", 0);
-	success = DrawScatterPlot(canvasReference, 2048, 1500, xs, 5, ys, 5, errorMessage);
+	errorMessage = (StringReference *)malloc(sizeof(StringReference));
+	success = DrawScatterPlotFromSettings(canvasReference, settings, errorMessage);
+	//wchar_t blah = "test";
+	//DrawText(canvasReference,30.0,30.0,blah,5,CreateRGBColor(0.5, 0.5, 0));
 
 	if(success){
-		size_t length;
 		ByteArray *pngdata = ConvertToPNG(canvasReference->image);
-		WriteToFile(pngdata, "example1.png");
+		WriteToFile(pngdata, "example2.png");
 		DeleteImage(canvasReference->image);
 	}else{
 		fprintf(stderr, "Error: ");
