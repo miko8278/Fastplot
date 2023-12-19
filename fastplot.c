@@ -1,6 +1,23 @@
 #include "pbPlots.h"
 #include "supportLib.h"
 
+
+RGBABitmapImage *RotateAntiClockwise90DegreesCUSTOM(RGBABitmapImage *image){
+  RGBABitmapImage *rotated;
+  double x, y;
+
+  rotated = CreateImage(ImageHeight(image), ImageWidth(image), GetBlack());
+
+  for(y = 0.0; y < ImageHeight(image); y = y + 1.0){
+    for(x = 0.0; x < ImageWidth(image); x = x + 1.0){
+      SetPixel(rotated, y, ImageWidth(image) - 1.0 - x, GetImagePixel(image, x, y));
+    }
+  }
+
+  return rotated;
+}
+
+
 int main(){
 	_Bool success;
 	StringReference *errorMessage;
@@ -37,10 +54,10 @@ int main(){
 	settings->width = 1800;
 	settings->height = 1200;
 	settings->autoBoundaries = false;
-	settings->xMax = 2;
-	settings->xMin = -2;
-	settings->yMax = 5;
-	settings->yMin = -5;
+	settings->xMax = 3;
+	settings->xMin = -3;
+	settings->yMax = 3.5;
+	settings->yMin = -5.77;
 	settings->autoPadding = true;
 	//settings->xPadding = 100;
 	//settings->yPadding = 100;
@@ -54,14 +71,15 @@ int main(){
 	ScatterPlotSeries *s [] = {series};
 	settings->scatterPlotSeries = s;
 	settings->scatterPlotSeriesLength = 1;
-
+	//RGBABitmapImage *blub = CreateImage(1000,1000,GetGray(0.1));
 	//Create canvas to draw on
 	RGBABitmapImageReference *canvasReference = CreateRGBABitmapImageReference();
 	errorMessage = (StringReference *)malloc(sizeof(StringReference));
 	success = DrawScatterPlotFromSettings(canvasReference, settings, errorMessage);
+	DrawTextUpwards(canvasReference->image,800.0,800.0,L"TEST",4, CreateRGBColor(0,0,0));
 	//wchar_t blah = "test";
-	//DrawText(canvasReference,30.0,30.0,blah,5,CreateRGBColor(0.5, 0.5, 0));
-
+	_Bool success2;
+	//DrawImageOnImage(canvasReference->image, blub, 0, 0);
 	if(success){
 		ByteArray *pngdata = ConvertToPNG(canvasReference->image);
 		WriteToFile(pngdata, "example2.png");
