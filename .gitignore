@@ -6,3 +6,6 @@ supportLib.c
 supportLib.h
 supportLib.o
 Makefile
+example2.png
+fastplot
+fastplot.exe
