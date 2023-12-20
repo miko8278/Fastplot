@@ -1,32 +1,86 @@
 #include "pbPlots.h"
 #include "supportLib.h"
-
+#include "string.h"
 
 // Kommentiert viel
 
-RGBABitmapImage *RotateAntiClockwise90DegreesCUSTOM(RGBABitmapImage *image){
-  RGBABitmapImage *rotated;
-  double x, y;
 
-  rotated = CreateImage(ImageHeight(image), ImageWidth(image), GetBlack());
 
-  for(y = 0.0; y < ImageHeight(image); y = y + 1.0){
-    for(x = 0.0; x < ImageWidth(image); x = x + 1.0){
-      SetPixel(rotated, y, ImageWidth(image) - 1.0 - x, GetImagePixel(image, x, y));
-    }
-  }
-
-  return rotated;
-}
 
 //argc und argv sind die argumente der Funktion main,
 //die sie durch Kommandozeilenparameter erhaelt.
-//
-int main(){
+int main(int argc, char* argv[]){
+
 	_Bool success;
 	StringReference *errorMessage;
 
 
+
+	//Kommandozeilenshit anfang
+	//Hier Scope fuer Kommandozeilenvariablen.
+	_Bool min_h = false;
+	_Bool min_d = false;
+	int min_d_spot = 0;
+	_Bool min_p = false;
+
+	//Kommandozeilenargumente abchecken
+	for (int i = 1; i < argc; i++){
+		//Haben wir ein "-h" liegen
+		if(strcmp("-h",argv[i]) == 0){
+			min_h = true;
+		}
+		else if(strcmp("-d",argv[i]) == 0){
+			min_d = true;
+			//Wir haben den Fall vorliegen, dass
+			//eine Datei angegeben wurde.
+			if(strncmp(argv[i+1],"-",1) != 0){
+				printf("%s \n",argv[i+1]);
+				i = i+1;
+				min_d_spot = i;
+				continue;
+			}
+			else{
+				printf("Keine Datei angeben\n");
+				printf("Abbruch\n");
+				return 1;
+			}
+
+		}
+		else if(strcmp("-p",argv[i]) == 0){
+			min_p = true;
+		}
+		else{ 
+			printf("Unbekanntes Argument %s \n", argv[i]);
+			printf("Abbruch\n");
+			return 1;
+		}
+	}
+
+	if(min_h){
+		printf("Hilfeseite fuer fastplot:\n  Optionen: \n\n");
+		printf("  %-20s%-100s \n","-h","Zeige diese Hilfeseite an \n");
+		printf("  %-20s%-100s \n","-d Dateiname","Benutze diese Datei als Quelle fuer Plot \n");
+		printf("  %-20s%-100s \n","-p","Zeige diese Hilfeseite an \n");
+		
+
+
+
+		//Nach der helppage beende das Programm erfolgreich
+		return 0;
+	}
+	if(min_d){
+	 printf("min_d set\n");
+	 printf("min_d_spot is %d\n",min_d_spot);
+	 printf("Datei ist an stelle argv[min_d_spot], hier: %s \n",argv[min_d_spot]);
+	}
+	if(min_p) printf("min_p set\n");
+
+	//Kommandozeilenshit ENDE
+
+
+
+	//HIER geht pbPlots los!
+	printf("Okay, ich plotte mal!\n");
 	// PLOT POINTS
 	double xs [] = {-2, -1, 0, 1, 2};
 	double ys [] = {2, -1, -2, -1, 2};
