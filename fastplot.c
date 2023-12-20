@@ -86,7 +86,7 @@ int main(int argc, char* argv[]){
 	//HIER geht pbPlots los!
 	printf("Okay, ich plotte mal!\n");
 	// PLOT POINTS
-	double xs [] = {-5, -1, 0, 1, 5};
+	double xs [] = {-6, -3, 0, 3, 6};
 	double ys [PLOTNUM][5] = {{2, -1, -2, -1, 2},
 						{1, -0, -1, -3, 4},
 						{3, -1, 0, -2, 3},
@@ -120,11 +120,11 @@ int main(int argc, char* argv[]){
 		//wenn false, dann gelten pointType. 
 		plot[i]->pointType = L"circles";
 		plot[i]->pointTypeLength = wcslen(plot[i]->pointType);
-		plot[i]->lineThickness = 2;
 		plot[i]->lineType = L"solid";
 		plot[i]->lineTypeLength = wcslen(plot[i]->lineType);
-		plot[i]->lineThickness = 3;
-		plot[i]->color = CreateRGBColor(0.5, 0.5, 0.5);	
+		plot[i]->lineThickness = 2;
+		//irgendwas fuer farbvariation... potentiell geht das kaputt...
+		plot[i]->color = CreateRGBColor((0.2*i), (0.1*i)+0.5, (0.05*i)+0.2);	
 	}
 
 	//
@@ -140,10 +140,10 @@ int main(int argc, char* argv[]){
 	//Grenzen des Plots
 	settings->autoBoundaries = false;
 	//Wenn autoBoundaries = false, dann muessen folgende 4 settings auskommentiert werden:
-	settings->xMax = 5;
-	settings->xMin = -5;
-	settings->yMax = 5;
-	settings->yMin = -5;
+	settings->xMax = 10;
+	settings->xMin = -10;
+	settings->yMax = 10;
+	settings->yMin = -10;
 
 	settings->autoPadding = true;
 	// Wenn autoPadding = false; dann muessen folgende 2 settings auskommentiert werden:
