@@ -3,7 +3,7 @@
 #include "string.h"
 
 // Kommentiert viel
-
+#define PLOTNUM 5
 
 
 
@@ -86,9 +86,12 @@ int main(int argc, char* argv[]){
 	//HIER geht pbPlots los!
 	printf("Okay, ich plotte mal!\n");
 	// PLOT POINTS
-	double xs [] = {-2, -1, 0, 1, 2};
-	double ys [] = {2, -1, -2, -1, 2};
-	double ys2 [] = {3, -2, -0, -3, 4};
+	double xs [] = {-5, -1, 0, 1, 5};
+	double ys [PLOTNUM][5] = {{2, -1, -2, -1, 2},
+						{1, -0, -1, -3, 4},
+						{3, -1, 0, -2, 3},
+						{4, -7, 1, -1, 1},
+						{3, -2, 2, -5, 6}};
 
 	//was ist das...?
 	StartArenaAllocator();
@@ -97,46 +100,32 @@ int main(int argc, char* argv[]){
 	// SERIES SETTINGS
 	// settings fuer jeweils einen Graphen...
 	// kann man mehrere von erstellen
-	//PLOT 1
-	ScatterPlotSeries *series = GetDefaultScatterPlotSeriesSettings();
-	//xs, ys sind die double arrays mit den Punkten. 5 ist die Laenge aktuell.
-	//Wenn man als Laenge bsp 4 eintraegt, dann zeichnet er auch nur 4.
-	//Traegt man mehr ein, so sind alle folgenden Punkte 0 und es sieht richtig komisch aus.
-	series->xs = xs;
-	series->xsLength = 5;
-	series->ys = ys;
-	series->ysLength = 5;
+	ScatterPlotSeries *plot[PLOTNUM];
+	for(int i = 0; i < PLOTNUM; i++){
+		plot[i] = GetDefaultScatterPlotSeriesSettings();
 
-	series->linearInterpolation = true;
-	//Wenn linearInterpolation = true, dann gelten alle line settings
-	//wenn false, dann gelten pointType. 
-	series->pointType = L"circles";
-	series->pointTypeLength = wcslen(series->pointType);
-	series->lineThickness = 2;
-	series->lineType = L"solid";
-	series->lineTypeLength = wcslen(series->lineType);
-	series->lineThickness = 3;
-	series->color = CreateRGBColor(0.5, 0.5, 0);
+		//xs, ys sind die double arrays mit den Punkten. 5 ist die Laenge aktuell.
+		//Wenn man als Laenge bsp 4 eintraegt, dann zeichnet er auch nur 4.
+		//Traegt man mehr ein, so sind alle folgenden Punkte 0 und es sieht richtig komisch aus.
 
+		//immer dieselbe X-Achse.
+		plot[i]->xs = xs;
+		plot[i]->xsLength = 5;
+		//immer unterschiedliche Y-Achsen.
+		plot[i]->ys = ys[i];
+		plot[i]->ysLength = 5;
 
-	//PLOT 2
-	ScatterPlotSeries *series2 = GetDefaultScatterPlotSeriesSettings();
-	series2->xs = xs;
-	series2->xsLength = 5;
-	series2->ys = ys2;
-	series2->ysLength = 5;
-
-	series2->linearInterpolation = true;
-
-	series2->pointType = L"circles";
-	series2->pointTypeLength = wcslen(series->pointType);
-	series2->lineThickness = 2;
-	series2->lineType = L"solid";
-	series2->lineTypeLength = wcslen(series->lineType);
-	series2->lineThickness = 3;
-	series2->color = CreateRGBColor(0.1, 0.5, 0.1);
-
-
+		plot[i]->linearInterpolation = true;
+		//Wenn linearInterpolation = true, dann gelten alle line settings
+		//wenn false, dann gelten pointType. 
+		plot[i]->pointType = L"circles";
+		plot[i]->pointTypeLength = wcslen(plot[i]->pointType);
+		plot[i]->lineThickness = 2;
+		plot[i]->lineType = L"solid";
+		plot[i]->lineTypeLength = wcslen(plot[i]->lineType);
+		plot[i]->lineThickness = 3;
+		plot[i]->color = CreateRGBColor(0.5, 0.5, 0.5);	
+	}
 
 	//
 	// SCATTERPLOTSETTINGS
@@ -145,16 +134,16 @@ int main(int argc, char* argv[]){
 	ScatterPlotSettings *settings = GetDefaultScatterPlotSettings();
 
 	//Aufloesung
-	settings->width = 1800;
-	settings->height = 1200;
+	settings->width = 800;
+	settings->height = 800;
 
 	//Grenzen des Plots
 	settings->autoBoundaries = false;
 	//Wenn autoBoundaries = false, dann muessen folgende 4 settings auskommentiert werden:
-	settings->xMax = 3;
-	settings->xMin = -3;
-	settings->yMax = 3.5;
-	settings->yMin = -5.77;
+	settings->xMax = 5;
+	settings->xMin = -5;
+	settings->yMax = 5;
+	settings->yMin = -5;
 
 	settings->autoPadding = true;
 	// Wenn autoPadding = false; dann muessen folgende 2 settings auskommentiert werden:
@@ -168,11 +157,18 @@ int main(int argc, char* argv[]){
 	settings->yLabelLength = wcslen(settings->yLabel);
 	settings->showGrid = true;
 
-	//hier muessen die Plots rein, wenns mehr sind!
-	ScatterPlotSeries *s [] = {series,series2};
+	//hier muessen die Plots rein, wenns mehr sind als 1!
+	//Jetzt automatisiert mit for schleife
+	ScatterPlotSeries *s [PLOTNUM];
+	for(int i = 0; i < PLOTNUM; i++){
+		s[i] = plot[i];
+	}
 	settings->scatterPlotSeries = s;
 	//hier anpassen, wie viele plots man hat...
-	settings->scatterPlotSeriesLength = 2;
+	//PLOTNUM ist immer richtig...
+	settings->scatterPlotSeriesLength = PLOTNUM;
+
+
 	//RGBABitmapImage *blub = CreateImage(1000,1000,GetGray(0.1));
 	//Create canvas to draw on
 	//ScatterPlotSettings *settings2 = GetDefaultScatterPlotSettings();
@@ -193,6 +189,8 @@ int main(int argc, char* argv[]){
 	//miko8278: DrawImageonImage verhaelt sich komisch bei mir
 	//DrawImageOnImage(canvasReference->image, canvasReference2->image, 0, 0);
 
+
+	//Wenn zeichnen erfolgreich war, erstelle png.
 	if(success){
 		ByteArray *pngdata = ConvertToPNG(canvasReference->image);
 		WriteToFile(pngdata, "example2.png");
