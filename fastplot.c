@@ -6,6 +6,9 @@
 #define PLOTNUM 5
 
 
+//splittet einen string in substrings mit dem angegebenen delimiter
+int split (const char *txt, char delim, char ***tokens);
+
 
 //argc und argv sind die argumente der Funktion main,
 //die sie durch Kommandozeilenparameter erhaelt.
@@ -22,13 +25,18 @@ int main(int argc, char* argv[]){
 	_Bool min_d = false;
 	int min_d_spot = 0;
 	_Bool min_p = false;
+	int min_p_spot = 0;
 
 	//Kommandozeilenargumente abchecken
 	for (int i = 1; i < argc; i++){
-		//Haben wir ein "-h" liegen
+		//"-h" ; Hilfeseite anzeigen
 		if(strcmp("-h",argv[i]) == 0){
 			min_h = true;
 		}
+
+
+
+		//-d Dateiname ; Eingabe des Dateinamens
 		else if(strcmp("-d",argv[i]) == 0){
 			min_d = true;
 			//Wir haben den Fall vorliegen, dass
@@ -46,9 +54,32 @@ int main(int argc, char* argv[]){
 			}
 
 		}
+
+
+
+		//-p ist fuer das aktivieren eines bestimmten
+		//plottes und dem angeben von optionen:
+		//-p "1 x=0 y=1 color=red ls=solid" entspricht
+		//Plot 1, x-Werte aus Spalte 0 der csv, y-Werte aus Spalte 1 der csv, rote Farbe, 
+		//linear interpoliert mit fester 
 		else if(strcmp("-p",argv[i]) == 0){
 			min_p = true;
+			if(strncmp(argv[i+1],"-",1) != 0){
+				min_p_spot = i+1;
+				printf("%s \n",argv[min_p_spot]);
+				i = i+1;
+				continue;
+			}
+			else{
+				printf("Keine/falsche Plotoptionen\n");
+				printf("Abbruch\n");
+				return 1;
+			}
+
 		}
+
+		//Abbruch, wenn irgendetwas anderes als die oberen
+		//Optionen genannt wurden
 		else{ 
 			printf("Unbekanntes Argument %s \n", argv[i]);
 			printf("Abbruch\n");
@@ -57,27 +88,79 @@ int main(int argc, char* argv[]){
 	}
 
 
-	//Hilfsseite
+	//Hilfsseite -h
 	if(min_h){
 		printf("Hilfeseite fuer fastplot:\n  Optionen: \n\n");
 		printf("  %-20s%-100s \n","-h","Zeige diese Hilfeseite an \n");
 		printf("  %-20s%-100s \n","-d Dateiname","Benutze diese Datei als Quelle fuer Plot \n");
-		printf("  %-20s%-100s \n","-p","Zeige diese Hilfeseite an \n");
+		printf("  %-20s%-100s \n","-p \"Optionen\" ","Optionen sind: x=spaltennum y=spaltennum color=farbe ls=linestyle\n");
 		
-
-
 
 		//Nach der helppage beende das Programm erfolgreich
 		return 0;
 	}
 
-	//Dateiargument
+	//Dateiargument -d
 	if(min_d){
 	 printf("min_d set\n");
 	 printf("min_d_spot is %d\n",min_d_spot);
 	 printf("Datei ist an stelle argv[min_d_spot], hier: %s \n",argv[min_d_spot]);
 	}
-	if(min_p) printf("min_p set\n");
+
+	//Plotargument -p
+	if(min_p){ 
+		printf("min_p set\n");
+
+		char **tokens;
+	    int x = 0,y=0;
+    	//Der String wird gesplittet in viele Teile, diese werden
+    	//durchiteriert.
+    	int count = split (argv[min_p_spot], ' ', &tokens);
+    	for (int i = 0; i < count; i++){
+			if(strncmp(tokens[i],"x=",2) == 0) {
+				char **subtokens;
+				int cnt;
+				cnt = split(tokens[i],'=',&subtokens);
+				printf("token1x: %s token2x: %s \n",subtokens[0],subtokens[1]);
+				// freeing subtokens 
+				for (int i = 0; i < cnt; i++) free (subtokens[i]);
+				free (subtokens);
+			}
+			else if(strncmp(tokens[i],"y=",2) == 0){
+				char **subtokens;
+				int cnt;
+				cnt = split(tokens[i],'=',&subtokens);
+				printf("token1y: %s token2y: %s \n",subtokens[0],subtokens[1]);
+				// freeing subtokens 
+				for (int i = 0; i < cnt; i++) free (subtokens[i]);
+				free (subtokens);
+			}
+			else if(strncmp(tokens[i],"col=",4) == 0){
+				char **subtokens;
+				int cnt;
+				cnt = split(tokens[i],'=',&subtokens);
+				printf("token1c: %s token2c: %s \n",subtokens[0],subtokens[1]);
+				// freeing subtokens 
+				for (int i = 0; i < cnt; i++) free (subtokens[i]);
+				free (subtokens);
+			}
+			else if(strncmp(tokens[i],"ls=",2) == 0){
+				char **subtokens;
+				int cnt;
+				cnt = split(tokens[i],'=',&subtokens);
+				printf("token1ls: %s token2ls: %s \n",subtokens[0],subtokens[1]);
+				// freeing subtokens 
+				for (int i = 0; i < cnt; i++) free (subtokens[i]);
+            	free (subtokens);
+        	}
+    }
+    // freeing tokens 
+    for (int i = 0; i < count; i++) free (tokens[i]);
+    free (tokens);
+
+
+
+	}
 
 	//Kommandozeilenshit ENDE
 
@@ -86,6 +169,8 @@ int main(int argc, char* argv[]){
 	//HIER geht pbPlots los!
 	printf("Okay, ich plotte mal!\n");
 	// PLOT POINTS
+	//Aktuell maximal 5 punkte... 
+	//Anpassen, wenn man csv dateien ausliest.
 	double xs [] = {-6, -3, 0, 3, 6};
 	double ys [PLOTNUM][5] = {{2, -1, -2, -1, 2},
 						{1, -0, -1, -3, 4},
@@ -206,4 +291,35 @@ int main(int argc, char* argv[]){
 	FreeAllocations();
 
 	return success ? 0 : 1;
+}
+
+
+
+
+
+//stackoverflowcode zum splitten von strings
+//versteh ich 50%
+//willkommen in der c hoelle
+int split (const char *txt, char delim, char ***tokens)
+{
+    int *tklen, *t, count = 1;
+    char **arr, *p = (char *) txt;
+
+    while (*p != '\0') if (*p++ == delim) count += 1;
+    t = tklen = calloc (count, sizeof (int));
+    for (p = (char *) txt; *p != '\0'; p++) *p == delim ? *t++ : (*t)++;
+    *tokens = arr = malloc (count * sizeof (char *));
+    t = tklen;
+    p = *arr++ = calloc (*(t++) + 1, sizeof (char *));
+    while (*txt != '\0')
+    {
+        if (*txt == delim)
+        {
+            p = *arr++ = calloc (*(t++) + 1, sizeof (char *));
+            txt++;
+        }
+        else *p++ = *txt++;
+    }
+    free (tklen);
+    return count;
 }
