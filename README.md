@@ -1,3 +1,9 @@
+# Aktuelles
+aktuell sollte folgende Eingabe funktionieren.
+```
+fastplot -d Dateiname -p "x=1 y=5 col=red"
+```
+
 # Fastplot
 Plotting program
 
