@@ -1,8 +1,11 @@
 # Aktuelles
 aktuell sollte folgende Eingabe funktionieren.
 ```
-fastplot -d Dateiname -p "x=1 y=5 col=red"
+fastplot -d file.csv -p "x=1 y=5 col=red"
 ```
+Es koennen maximal files mit 10000 Zeichen Zeilenlaenge gelesen werden.
+Als naechstes muss alles richtig zum Plotprogramm zugeordnet werden...
+
 
 # Fastplot
 Plotting program
