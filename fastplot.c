@@ -9,6 +9,36 @@
 //splittet einen string in substrings mit dem angegebenen delimiter
 int split (const char *txt, char delim, char ***tokens);
 
+int readCSV(char *dateiname){
+
+		//Die angegebene CSV auslesen
+		FILE* filePointer;
+		//Das Auslesen funktioniert Zeile fuer Zeile.
+		//Wenn eine Zeile mehr als 10000 Zeichen hat
+		// wird das Programm nicht funktionieren
+		// Passiert bei einer harten Limitierung von
+		// Plots auf 20 aber nicht.
+		int bufferLength = 10000;
+		char buffer[bufferLength];
+		// oeffne die angegebene file im readonly modus
+		filePointer = fopen(dateiname, "r");
+		//Datei konnte nicht geoeffnet
+		if(filePointer == NULL){
+			printf("Kann Datei nicht oeffnen. Existiert die Datei?\n");
+			return 1; //failed return
+		}
+		//gebe Datei 1zu1 aus
+		//als naechstes muss mit split geparsed werden...
+		else{
+			for(int i =0; fgets(buffer, bufferLength, filePointer); i++) {
+				printf("Zeile No. %d: %s", i,buffer);
+			}   
+		}
+
+		fclose(filePointer);
+		return 0; //return success
+
+}
 
 //argc und argv sind die argumente der Funktion main,
 //die sie durch Kommandozeilenparameter erhaelt.
@@ -102,9 +132,16 @@ int main(int argc, char* argv[]){
 
 	//Dateiargument -d
 	if(min_d){
-	 printf("min_d set\n");
-	 printf("min_d_spot is %d\n",min_d_spot);
-	 printf("Datei ist an stelle argv[min_d_spot], hier: %s \n",argv[min_d_spot]);
+		printf("min_d set\n");
+		printf("min_d_spot is %d\n",min_d_spot);
+		printf("Datei ist an stelle argv[min_d_spot], hier: %s \n",argv[min_d_spot]);
+
+		//failed
+		if(readCSV(argv[min_d_spot])){
+			return 1;
+		}
+		//else sucess
+
 	}
 
 	//Plotargument -p
