@@ -10,122 +10,14 @@
 int split (const char *txt, char delim, char ***tokens);
 
 
-//void bar(int *err) { 
-//	*err = 123; 
-//} 
-//
-//int err1, err2; 
-//err1 = foo(); 
-//bar(&err2); 
-
 //Liest csv Datei aus.
 //returned ein 2 dim double array, nennen wir es array[x][y]
 //x ist hierbei die Zeile, y ist die Spalte
 //dafuer muss mit malloc dynamisch Speicherplatz reserviert
 //werden, wenn wir wissen nicht, wie gross die datei ist *wuerg*
-double **readCSV(char *dateiname, int *spalte, int *zeile){
+double **readCSV(char *dateiname, int *spalte, int *zeile);
 
-		//Die angegebene CSV auslesen
-		FILE* filePointer;
-		//Das Auslesen funktioniert Zeile fuer Zeile.
-		//Wenn eine Zeile mehr als 10000 Zeichen hat
-		// wird das Programm nicht funktionieren
-		// Passiert bei einer harten Limitierung von
-		// Plots auf 20 aber nicht.
-		int bufferLength = 10000;
-		char buffer[bufferLength];
-		char *endpntr; // fuer strtod() noetig
-		int cnt = 0;
-		int i = 0;
-		// oeffne die angegebene file im readonly modus
-		filePointer = fopen(dateiname, "r");
-		//Datei konnte nicht geoeffnet
-		if(filePointer == NULL){
-			printf("Kann Datei nicht oeffnen. Existiert die Datei?\n");
-			//return 1; //failed return
-		}
-		//zaehle Zeilen und Spalten der Datei
-		else{
-			for(i = 0; fgets(buffer, bufferLength, filePointer); i++) {
-				char **tokenf;
-				int newcnt = 0;
-				newcnt = split(buffer,';',&tokenf);
-				if(cnt < newcnt) cnt = newcnt; // maximale Spaltenzahl
-				printf("Zeile No. %d;Elemente: %d : %s ", i,newcnt,buffer);
-				for (int j = 0; j < cnt; j++) free (tokenf[j]);
-				free (tokenf);
-			}   
-		}
-		printf("Final result: Spalten: %d Zeilen: %d \n",cnt, i);
-		//Uebergabe der Spalten und Zeilenwerte, Plot braucht es auch.
-		*spalte = cnt;
-		*zeile = i;
-		fclose(filePointer);
-		//Jetzt ist bekannt, wie viele Spalten und Zeilen die csv Datei hat.
-		//Dynamisch Speicherplatz reservieren fuer ein 2D array.
-		// https://www.youtube.com/watch?v=22wkCgsPZSU
-		//wenn man den kack verstehen will.
-		double **matrix;
-		//zeilen
-		matrix = malloc(sizeof(double *) * i);
-		for(int j = 0;j < i;j++){
-			//spalten
-			matrix[j] = malloc(sizeof(double) * cnt);
-		}
 
-		//Speicherplatz ist reserviert, jetzt die Werte aus der csv
-		//in das double[][] reinkriegen...
-		//Oeffne ERNEUT die angegebene file im readonly modus
-		filePointer = fopen(dateiname, "r");
-		if(filePointer == NULL){
-			printf("Kann Datei nicht oeffnen beim 2. Versuch.\n");
-			//return 1; //failed return
-		}
-		else{
-			for(int m = 0; fgets(buffer, bufferLength, filePointer); m++) {
-				char **tokenf;
-				int newcnt = 0;
-				newcnt = split(buffer,';',&tokenf);
-				for(int n = 0; n < newcnt; n++){
-					//Wir muessen den string noch in
-					//ein double 'casten'. 
-					//endpntr enthaelt den reststring, der nicht double ist
-					//sollte in unserem Falle immer leer sein.
-					//Koennte potentiell mal fuer Einheiten verwendet werden.
-					matrix[m][n] = strtod(tokenf[n],&endpntr);
-					printf("%lf ",matrix[m][n]);
-				}
-				printf("\n");
-				//printf("Zeile No. %d;Elemente: %d : %s ", m,newcnt,buffer);
-				for (int j = 0; j < cnt; j++) free (tokenf[j]);
-				free (tokenf);
-			}   
-		}
-		fclose(filePointer);
-
-		return matrix; //return success
-
-}
-
-//HURRA, readCSV liefert ein double mit den richtigen
-//Werten, aber Zeilen und Spalten stehen an unguenstigen Orten fuer den Plotter.
-double **swapXY(double **old_matrix, int zeilen, int spalten){
-	//spalten
-	double **matrix = malloc(sizeof(double *) * spalten);
-	for(int j = 0;j < spalten;j++){
-		//zeilen
-		matrix[j] = malloc(sizeof(double) * zeilen);
-	}
-
-	for(int m = 0; m < zeilen; m++){
-		for(int n = 0; n < spalten; n++){
-			matrix[m][n] = old_matrix[m][n];	
-		}
-	}
-
-	return matrix;
-
-}
 
 //argc und argv sind die argumente der Funktion main,
 //die sie durch Kommandozeilenparameter erhaelt.
@@ -464,4 +356,90 @@ int split (const char *txt, char delim, char ***tokens)
     }
     free (tklen);
     return count;
+}
+
+
+
+double **readCSV(char *dateiname, int *spalte, int *zeile){
+
+		//Die angegebene CSV auslesen
+		FILE* filePointer;
+		//Das Auslesen funktioniert Zeile fuer Zeile.
+		//Wenn eine Zeile mehr als 10000 Zeichen hat
+		// wird das Programm nicht funktionieren
+		// Passiert bei einer harten Limitierung von
+		// Plots auf 20 aber nicht.
+		int bufferLength = 10000;
+		char buffer[bufferLength];
+		char *endpntr; // fuer strtod() noetig
+		int cnt = 0;
+		int i = 0;
+		// oeffne die angegebene file im readonly modus
+		filePointer = fopen(dateiname, "r");
+		//Datei konnte nicht geoeffnet
+		if(filePointer == NULL){
+			printf("Kann Datei nicht oeffnen. Existiert die Datei?\n");
+			//return 1; //failed return
+		}
+		//zaehle Zeilen und Spalten der Datei
+		else{
+			for(i = 0; fgets(buffer, bufferLength, filePointer); i++) {
+				char **tokenf;
+				int newcnt = 0;
+				newcnt = split(buffer,';',&tokenf);
+				if(cnt < newcnt) cnt = newcnt; // maximale Spaltenzahl
+				printf("Zeile No. %d;Elemente: %d : %s ", i,newcnt,buffer);
+				for (int j = 0; j < cnt; j++) free (tokenf[j]);
+				free (tokenf);
+			}   
+		}
+		printf("Final result: Spalten: %d Zeilen: %d \n",cnt, i);
+		//Uebergabe der Spalten und Zeilenwerte, Plot braucht es auch.
+		*spalte = cnt;
+		*zeile = i;
+		fclose(filePointer);
+		//Jetzt ist bekannt, wie viele Spalten und Zeilen die csv Datei hat.
+		//Dynamisch Speicherplatz reservieren fuer ein 2D array.
+		// https://www.youtube.com/watch?v=22wkCgsPZSU
+		//wenn man den kack verstehen will.
+		double **matrix;
+		//zeilen
+		matrix = malloc(sizeof(double *) * i);
+		for(int j = 0;j < i;j++){
+			//spalten
+			matrix[j] = malloc(sizeof(double) * cnt);
+		}
+
+		//Speicherplatz ist reserviert, jetzt die Werte aus der csv
+		//in das double[][] reinkriegen...
+		//Oeffne ERNEUT die angegebene file im readonly modus
+		filePointer = fopen(dateiname, "r");
+		if(filePointer == NULL){
+			printf("Kann Datei nicht oeffnen beim 2. Versuch.\n");
+			//return 1; //failed return
+		}
+		else{
+			for(int m = 0; fgets(buffer, bufferLength, filePointer); m++) {
+				char **tokenf;
+				int newcnt = 0;
+				newcnt = split(buffer,';',&tokenf);
+				for(int n = 0; n < newcnt; n++){
+					//Wir muessen den string noch in
+					//ein double 'casten'. 
+					//endpntr enthaelt den reststring, der nicht double ist
+					//sollte in unserem Falle immer leer sein.
+					//Koennte potentiell mal fuer Einheiten verwendet werden.
+					matrix[m][n] = strtod(tokenf[n],&endpntr);
+					printf("%lf ",matrix[m][n]);
+				}
+				printf("\n");
+				//printf("Zeile No. %d;Elemente: %d : %s ", m,newcnt,buffer);
+				for (int j = 0; j < cnt; j++) free (tokenf[j]);
+				free (tokenf);
+			}   
+		}
+		fclose(filePointer);
+
+		return matrix; //return success
+
 }
