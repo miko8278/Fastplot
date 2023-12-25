@@ -9,7 +9,21 @@
 //splittet einen string in substrings mit dem angegebenen delimiter
 int split (const char *txt, char delim, char ***tokens);
 
-int readCSV(char *dateiname){
+
+//void bar(int *err) { 
+//	*err = 123; 
+//} 
+//
+//int err1, err2; 
+//err1 = foo(); 
+//bar(&err2); 
+
+//Liest csv Datei aus.
+//returned ein 2 dim double array, nennen wir es array[x][y]
+//x ist hierbei die Zeile, y ist die Spalte
+//dafuer muss mit malloc dynamisch Speicherplatz reserviert
+//werden, wenn wir wissen nicht, wie gross die datei ist *wuerg*
+double **readCSV(char *dateiname, int *spalte, int *zeile){
 
 		//Die angegebene CSV auslesen
 		FILE* filePointer;
@@ -20,23 +34,96 @@ int readCSV(char *dateiname){
 		// Plots auf 20 aber nicht.
 		int bufferLength = 10000;
 		char buffer[bufferLength];
+		char *endpntr; // fuer strtod() noetig
+		int cnt = 0;
+		int i = 0;
 		// oeffne die angegebene file im readonly modus
 		filePointer = fopen(dateiname, "r");
 		//Datei konnte nicht geoeffnet
 		if(filePointer == NULL){
 			printf("Kann Datei nicht oeffnen. Existiert die Datei?\n");
-			return 1; //failed return
+			//return 1; //failed return
 		}
-		//gebe Datei 1zu1 aus
-		//als naechstes muss mit split geparsed werden...
+		//zaehle Zeilen und Spalten der Datei
 		else{
-			for(int i =0; fgets(buffer, bufferLength, filePointer); i++) {
-				printf("Zeile No. %d: %s", i,buffer);
+			for(i = 0; fgets(buffer, bufferLength, filePointer); i++) {
+				char **tokenf;
+				int newcnt = 0;
+				newcnt = split(buffer,';',&tokenf);
+				if(cnt < newcnt) cnt = newcnt; // maximale Spaltenzahl
+				printf("Zeile No. %d;Elemente: %d : %s ", i,newcnt,buffer);
+				for (int j = 0; j < cnt; j++) free (tokenf[j]);
+				free (tokenf);
 			}   
 		}
-
+		printf("Final result: Spalten: %d Zeilen: %d \n",cnt, i);
+		//Uebergabe der Spalten und Zeilenwerte, Plot braucht es auch.
+		*spalte = cnt;
+		*zeile = i;
 		fclose(filePointer);
-		return 0; //return success
+		//Jetzt ist bekannt, wie viele Spalten und Zeilen die csv Datei hat.
+		//Dynamisch Speicherplatz reservieren fuer ein 2D array.
+		// https://www.youtube.com/watch?v=22wkCgsPZSU
+		//wenn man den kack verstehen will.
+		double **matrix;
+		//zeilen
+		matrix = malloc(sizeof(double *) * i);
+		for(int j = 0;j < i;j++){
+			//spalten
+			matrix[j] = malloc(sizeof(double) * cnt);
+		}
+
+		//Speicherplatz ist reserviert, jetzt die Werte aus der csv
+		//in das double[][] reinkriegen...
+		//Oeffne ERNEUT die angegebene file im readonly modus
+		filePointer = fopen(dateiname, "r");
+		if(filePointer == NULL){
+			printf("Kann Datei nicht oeffnen beim 2. Versuch.\n");
+			//return 1; //failed return
+		}
+		else{
+			for(int m = 0; fgets(buffer, bufferLength, filePointer); m++) {
+				char **tokenf;
+				int newcnt = 0;
+				newcnt = split(buffer,';',&tokenf);
+				for(int n = 0; n < newcnt; n++){
+					//Wir muessen den string noch in
+					//ein double 'casten'. 
+					//endpntr enthaelt den reststring, der nicht double ist
+					//sollte in unserem Falle immer leer sein.
+					//Koennte potentiell mal fuer Einheiten verwendet werden.
+					matrix[m][n] = strtod(tokenf[n],&endpntr);
+					printf("%lf ",matrix[m][n]);
+				}
+				printf("\n");
+				//printf("Zeile No. %d;Elemente: %d : %s ", m,newcnt,buffer);
+				for (int j = 0; j < cnt; j++) free (tokenf[j]);
+				free (tokenf);
+			}   
+		}
+		fclose(filePointer);
+
+		return matrix; //return success
+
+}
+
+//HURRA, readCSV liefert ein double mit den richtigen
+//Werten, aber Zeilen und Spalten stehen an unguenstigen Orten fuer den Plotter.
+double **swapXY(double **old_matrix, int zeilen, int spalten){
+	//spalten
+	double **matrix = malloc(sizeof(double *) * spalten);
+	for(int j = 0;j < spalten;j++){
+		//zeilen
+		matrix[j] = malloc(sizeof(double) * zeilen);
+	}
+
+	for(int m = 0; m < zeilen; m++){
+		for(int n = 0; n < spalten; n++){
+			matrix[m][n] = old_matrix[m][n];	
+		}
+	}
+
+	return matrix;
 
 }
 
@@ -46,8 +133,10 @@ int main(int argc, char* argv[]){
 
 	_Bool success;
 	StringReference *errorMessage;
-
-
+	double **plotData;
+	double **flippedData;
+	int spalt = 0;
+	int zeil = 0;
 
 	//Kommandozeilenshit anfang
 	//Hier Scope fuer Kommandozeilenvariablen.
@@ -136,12 +225,8 @@ int main(int argc, char* argv[]){
 		printf("min_d_spot is %d\n",min_d_spot);
 		printf("Datei ist an stelle argv[min_d_spot], hier: %s \n",argv[min_d_spot]);
 
-		//failed
-		if(readCSV(argv[min_d_spot])){
-			return 1;
-		}
-		//else sucess
-
+		//ACHTUNG, aktuell keine Fehlerpruefung...
+		plotData = readCSV(argv[min_d_spot],&spalt,&zeil);
 	}
 
 	//Plotargument -p
@@ -208,13 +293,15 @@ int main(int argc, char* argv[]){
 	// PLOT POINTS
 	//Aktuell maximal 5 punkte... 
 	//Anpassen, wenn man csv dateien ausliest.
-	double xs [] = {-6, -3, 0, 3, 6};
+
+	double xs [] = {0,1,2,3,4};
 	double ys [PLOTNUM][5] = {{2, -1, -2, -1, 2},
 						{1, -0, -1, -3, 4},
 						{3, -1, 0, -2, 3},
 						{4, -7, 1, -1, 1},
 						{3, -2, 2, -5, 6}};
 
+	printf("Spalten:%d Zeilen:%d\n",spalt,zeil);
 	//was ist das...?
 	StartArenaAllocator();
 
@@ -223,19 +310,35 @@ int main(int argc, char* argv[]){
 	// settings fuer jeweils einen Graphen...
 	// kann man mehrere von erstellen
 	ScatterPlotSeries *plot[PLOTNUM];
-	for(int i = 0; i < PLOTNUM; i++){
+	double *xsspalte = malloc(sizeof(double)* zeil);
+	double xstest[] = {0,1,2,3,4,5,6,7,8,9};
+	double ystest[] = {0.1,0.2,0.5,1,2,5,10,20,50,70};
+	for(int i = 0; i < spalt; i++){
 		plot[i] = GetDefaultScatterPlotSeriesSettings();
 
 		//xs, ys sind die double arrays mit den Punkten. 5 ist die Laenge aktuell.
 		//Wenn man als Laenge bsp 4 eintraegt, dann zeichnet er auch nur 4.
 		//Traegt man mehr ein, so sind alle folgenden Punkte 0 und es sieht richtig komisch aus.
-
+		//Aktuell ist plotData[zeile][spalte], es muss andersrum
+		
+		//Speicherplatz reservieren fuer eine Spalte
+		//Werte reinpressen
+		double *ysspalte = malloc(sizeof(double) * zeil);
+		for(int b = 0; b < zeil; b++){
+			if(i == 0){
+				xsspalte[b] = plotData[b][0];
+			}
+				ysspalte[b] = plotData[b][i];
+		}
+		printf("zeilen: %d spalten: %d", zeil, spalt);
+		//flippedData = swapXY(plotData, zeil, spalt);
+		printf("\n");
 		//immer dieselbe X-Achse.
-		plot[i]->xs = xs;
-		plot[i]->xsLength = 5;
+		plot[i]->xs = xsspalte;
+		plot[i]->xsLength = zeil;
 		//immer unterschiedliche Y-Achsen.
-		plot[i]->ys = ys[i];
-		plot[i]->ysLength = 5;
+		plot[i]->ys = ysspalte;
+		plot[i]->ysLength = zeil;
 
 		plot[i]->linearInterpolation = true;
 		//Wenn linearInterpolation = true, dann gelten alle line settings
@@ -260,12 +363,14 @@ int main(int argc, char* argv[]){
 	settings->height = 800;
 
 	//Grenzen des Plots
-	settings->autoBoundaries = false;
+	settings->autoBoundaries = true;
 	//Wenn autoBoundaries = false, dann muessen folgende 4 settings auskommentiert werden:
-	settings->xMax = 10;
-	settings->xMin = -10;
-	settings->yMax = 10;
-	settings->yMin = -10;
+	//pbplot Softwarebug: Wenn die boundaries zu weit ausserhalb von dem sind,
+	//was geplottet wird, dann gibts Speicherzugriffsfehler. FUUUUU
+	//settings->xMax = 10;
+	//settings->xMin = 0;
+	//settings->yMax = 400;
+	//settings->yMin = 0;
 
 	settings->autoPadding = true;
 	// Wenn autoPadding = false; dann muessen folgende 2 settings auskommentiert werden:
