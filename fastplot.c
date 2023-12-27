@@ -3,7 +3,7 @@
 #include "string.h"
 
 // Kommentiert viel
-#define PLOTNUM 5
+#define PLOTNUM 20
 
 
 //splittet einen string in substrings mit dem angegebenen delimiter
@@ -23,6 +23,25 @@ double **readCSV(char *dateiname, int *spalte, int *zeile);
 //die sie durch Kommandozeilenparameter erhaelt.
 int main(int argc, char* argv[]){
 
+	//Idee ist maximal 20 Plots in einem Graphen plotten
+	//zu koennen. Man kann unproblematisch mehr machen,
+	//aber dann muss man hoehere Werte fuer Speicher, Zeilen etc
+	//veranschlagen. Regelt man es dynamisch haste 100 Zeilen *&ptr->xptr **malloc(size_t** yptnr[]->.cs)&*&*&*
+	//PLOTNUM = 20!
+	int x[PLOTNUM];
+	int y[PLOTNUM];
+	int col[PLOTNUM]; 
+	int min_p[PLOTNUM];
+	int p_cnt = 0;
+	int min_p_spot[PLOTNUM];
+	//arrays initialisieren
+	for(int h = 0; h < PLOTNUM; h++){
+		min_p[h] = 0;
+		min_p_spot[h] = 0;
+		x[h] = 0;
+		y[h] = 0;
+	}
+
 	_Bool success;
 	StringReference *errorMessage;
 	double **plotData;
@@ -35,8 +54,7 @@ int main(int argc, char* argv[]){
 	_Bool min_h = false;
 	_Bool min_d = false;
 	int min_d_spot = 0;
-	_Bool min_p = false;
-	int min_p_spot = 0;
+	
 
 	//Kommandozeilenargumente abchecken
 	for (int i = 1; i < argc; i++){
@@ -44,7 +62,6 @@ int main(int argc, char* argv[]){
 		if(strcmp("-h",argv[i]) == 0){
 			min_h = true;
 		}
-
 
 
 		//-d Dateiname ; Eingabe des Dateinamens
@@ -74,12 +91,13 @@ int main(int argc, char* argv[]){
 		//Plot 1, x-Werte aus Spalte 0 der csv, y-Werte aus Spalte 1 der csv, rote Farbe, 
 		//linear interpoliert mit fester 
 		else if(strcmp("-p",argv[i]) == 0){
-			min_p = true;
+			//es ist moeglich 20 verschiedene -p optionen anzugeben...
+			min_p[p_cnt] = 1;
+			
 			if(strncmp(argv[i+1],"-",1) != 0){
-				min_p_spot = i+1;
-				printf("%s \n",argv[min_p_spot]);
+				min_p_spot[p_cnt] = i+1;
+				printf("%s \n",argv[min_p_spot[p_cnt]]);
 				i = i+1;
-				continue;
 			}
 			else{
 				printf("Keine/falsche Plotoptionen\n");
@@ -87,6 +105,9 @@ int main(int argc, char* argv[]){
 				return 1;
 			}
 
+			if(p_cnt < PLOTNUM){
+				p_cnt++;
+			}
 		}
 
 		//Abbruch, wenn irgendetwas anderes als die oberen
@@ -122,76 +143,81 @@ int main(int argc, char* argv[]){
 	}
 
 	//Plotargument -p
-	if(min_p){ 
-		printf("min_p set\n");
+	//kann bis zu 20 mal verwendet werden. Fuer jeden Plot eines mit Optionen.
+	for(int g = 0; g <= p_cnt; g++){
+		if(min_p[g]){ 
+			printf("min_p[%d] set\n",g);
 
-		char **tokens;
-	    int x = 0,y=0;
-    	//Der String wird gesplittet in viele Teile, diese werden
-    	//durchiteriert.
-    	int count = split (argv[min_p_spot], ' ', &tokens);
-    	for (int i = 0; i < count; i++){
-			if(strncmp(tokens[i],"x=",2) == 0) {
-				char **subtokens;
-				int cnt;
-				cnt = split(tokens[i],'=',&subtokens);
-				printf("token1x: %s token2x: %s \n",subtokens[0],subtokens[1]);
-				// freeing subtokens 
-				for (int i = 0; i < cnt; i++) free (subtokens[i]);
-				free (subtokens);
-			}
-			else if(strncmp(tokens[i],"y=",2) == 0){
-				char **subtokens;
-				int cnt;
-				cnt = split(tokens[i],'=',&subtokens);
-				printf("token1y: %s token2y: %s \n",subtokens[0],subtokens[1]);
-				// freeing subtokens 
-				for (int i = 0; i < cnt; i++) free (subtokens[i]);
-				free (subtokens);
-			}
-			else if(strncmp(tokens[i],"col=",4) == 0){
-				char **subtokens;
-				int cnt;
-				cnt = split(tokens[i],'=',&subtokens);
-				printf("token1c: %s token2c: %s \n",subtokens[0],subtokens[1]);
-				// freeing subtokens 
-				for (int i = 0; i < cnt; i++) free (subtokens[i]);
-				free (subtokens);
-			}
-			else if(strncmp(tokens[i],"ls=",2) == 0){
-				char **subtokens;
-				int cnt;
-				cnt = split(tokens[i],'=',&subtokens);
-				printf("token1ls: %s token2ls: %s \n",subtokens[0],subtokens[1]);
-				// freeing subtokens 
-				for (int i = 0; i < cnt; i++) free (subtokens[i]);
-            	free (subtokens);
-        	}
-    }
-    // freeing tokens 
-    for (int i = 0; i < count; i++) free (tokens[i]);
-    free (tokens);
+			char **tokens;
+			//int x = 0,y=0;
+			//Der String wird gesplittet in viele Teile, diese werden
+			//durchiteriert.
+			int count = split (argv[min_p_spot[g]], ' ', &tokens);
+			for (int i = 0; i < count; i++){
+				if(strncmp(tokens[i],"x=",2) == 0) {
+					char **subtokens;
+					char *spntr;
+					int cnt;
+					cnt = split(tokens[i],'=',&subtokens);
+					x[g] = (int) strtod(subtokens[1],&spntr);
+					printf("token1x: %s token2x: %d \n",subtokens[0],x[g]);
+					// freeing subtokens 
+					for (int i = 0; i < cnt; i++) free (subtokens[i]);
+					free (subtokens);
+				}
+				else if(strncmp(tokens[i],"y=",2) == 0){
+					char **subtokens;
+					char *spntr;
+					int cnt;
+					cnt = split(tokens[i],'=',&subtokens);
+					y[g] = (int) strtod(subtokens[1],&spntr);
+					printf("token1y: %s token2y: %d \n",subtokens[0],y[g]);
+					// freeing subtokens 
+					for (int i = 0; i < cnt; i++) free (subtokens[i]);
+					free (subtokens);
+				}
+				else if(strncmp(tokens[i],"col=",4) == 0){
+					char **subtokens;
+					int cnt;
+					cnt = split(tokens[i],'=',&subtokens);
+					printf("token1c: %s token2c: %s \n",subtokens[0],subtokens[1]);
+					// freeing subtokens 
+					for (int i = 0; i < cnt; i++) free (subtokens[i]);
+					free (subtokens);
+				}
+				else if(strncmp(tokens[i],"ls=",2) == 0){
+					char **subtokens;
+					int cnt;
+					cnt = split(tokens[i],'=',&subtokens);
+					printf("token1ls: %s token2ls: %s \n",subtokens[0],subtokens[1]);
+					// freeing subtokens 
+					for (int i = 0; i < cnt; i++) free (subtokens[i]);
+					free (subtokens);
+				}
+		}
+		// freeing tokens 
+		for (int i = 0; i < count; i++) free (tokens[i]);
+		free (tokens);
 
-
-
+		}
 	}
-
 	//Kommandozeilenshit ENDE
 
 
 
 	//HIER geht pbPlots los!
 	printf("Okay, ich plotte mal!\n");
-	// PLOT POINTS
-	//Aktuell maximal 5 punkte... 
-	//Anpassen, wenn man csv dateien ausliest.
 
-	double xs [] = {0,1,2,3,4};
-	double ys [PLOTNUM][5] = {{2, -1, -2, -1, 2},
-						{1, -0, -1, -3, 4},
-						{3, -1, 0, -2, 3},
-						{4, -7, 1, -1, 1},
-						{3, -2, 2, -5, 6}};
+	// PLOT POINTS alt
+	//Alte Test Arrays
+	double xs[] = {0,0}; // :D :D
+	double ys[] = {0,0}; 
+	//double xs [] = {0,1,2,3,4};
+	//double ys [PLOTNUM][5] = {{2, -1, -2, -1, 2},
+	//					{1, -0, -1, -3, 4},
+	//					{3, -1, 0, -2, 3},
+	//					{4, -7, 1, -1, 1},
+	//					{3, -2, 2, -5, 6}};
 
 	printf("Spalten:%d Zeilen:%d\n",spalt,zeil);
 	//was ist das...?
@@ -202,29 +228,28 @@ int main(int argc, char* argv[]){
 	// settings fuer jeweils einen Graphen...
 	// kann man mehrere von erstellen
 	ScatterPlotSeries *plot[PLOTNUM];
+	ScatterPlotSeries *nullplot;
 	double *xsspalte = malloc(sizeof(double)* zeil);
-	double xstest[] = {0,1,2,3,4,5,6,7,8,9};
-	double ystest[] = {0.1,0.2,0.5,1,2,5,10,20,50,70};
-	for(int i = 0; i < spalt; i++){
-		plot[i] = GetDefaultScatterPlotSeriesSettings();
+	//double xstest[] = {0,1,2,3,4,5,6,7,8,9};
+	//double ystest[] = {0.1,0.2,0.5,1,2,5,10,20,50,70};
 
+	for(int i = 0; i < PLOTNUM; i++){
+		plot[i] = GetDefaultScatterPlotSeriesSettings();
+		printf("Plot no: %d  xSpalte: %d  ySpalte: %d \n" ,i,x[i],y[i]);
 		//xs, ys sind die double arrays mit den Punkten. 5 ist die Laenge aktuell.
 		//Wenn man als Laenge bsp 4 eintraegt, dann zeichnet er auch nur 4.
 		//Traegt man mehr ein, so sind alle folgenden Punkte 0 und es sieht richtig komisch aus.
 		//Aktuell ist plotData[zeile][spalte], es muss andersrum
 		
 		//Speicherplatz reservieren fuer eine Spalte
-		//Werte reinpressen
+		//Werte reinpressen, scheiss auf free, programm laeuft nur kurz
 		double *ysspalte = malloc(sizeof(double) * zeil);
 		for(int b = 0; b < zeil; b++){
 			if(i == 0){
-				xsspalte[b] = plotData[b][0];
+				xsspalte[b] = plotData[b][x[i]];
 			}
-				ysspalte[b] = plotData[b][i];
+				ysspalte[b] = plotData[b][y[i]];
 		}
-		printf("zeilen: %d spalten: %d", zeil, spalt);
-		//flippedData = swapXY(plotData, zeil, spalt);
-		printf("\n");
 		//immer dieselbe X-Achse.
 		plot[i]->xs = xsspalte;
 		plot[i]->xsLength = zeil;
@@ -275,12 +300,28 @@ int main(int argc, char* argv[]){
 	settings->yLabel = L"Dies soll ein Y label sein"; // Funktioniert bei mir nicht
 	settings->yLabelLength = wcslen(settings->yLabel);
 	settings->showGrid = true;
-
 	//hier muessen die Plots rein, wenns mehr sind als 1!
 	//Jetzt automatisiert mit for schleife
 	ScatterPlotSeries *s [PLOTNUM];
+	nullplot = GetDefaultScatterPlotSeriesSettings();
+	nullplot->xs = xs;
+	nullplot->xsLength = 2;
+	nullplot->ys = ys;
+	nullplot->ysLength = 2;
+	nullplot->linearInterpolation = false;
+	
 	for(int i = 0; i < PLOTNUM; i++){
+		if(i < p_cnt){
 		s[i] = plot[i];
+		}
+		else{
+			s[i] = nullplot;
+		}
+		//workaround
+		//ich weiss nicht warum, aber wenn man nicht alle 20
+		//Plots plottet, dann gibts Speicherzugriffsfehler
+		//Daher wird hier der 0-Plot geplottet, immer wenns
+		//keine Optionen gibt.
 	}
 	settings->scatterPlotSeries = s;
 	//hier anpassen, wie viele plots man hat...
@@ -338,7 +379,6 @@ int split (const char *txt, char delim, char ***tokens)
 {
     int *tklen, *t, count = 1;
     char **arr, *p = (char *) txt;
-
     while (*p != '\0') if (*p++ == delim) count += 1;
     t = tklen = calloc (count, sizeof (int));
     for (p = (char *) txt; *p != '\0'; p++) *p == delim ? *t++ : (*t)++;
@@ -430,7 +470,7 @@ double **readCSV(char *dateiname, int *spalte, int *zeile){
 					//sollte in unserem Falle immer leer sein.
 					//Koennte potentiell mal fuer Einheiten verwendet werden.
 					matrix[m][n] = strtod(tokenf[n],&endpntr);
-					printf("%lf ",matrix[m][n]);
+					printf("%10lf |",matrix[m][n]);
 				}
 				printf("\n");
 				//printf("Zeile No. %d;Elemente: %d : %s ", m,newcnt,buffer);
