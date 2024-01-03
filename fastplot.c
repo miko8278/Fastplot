@@ -300,8 +300,8 @@ int main(int argc, char* argv[]){
 	settings->yLabel = L"Dies soll ein Y label sein"; // Funktioniert bei mir nicht
 	settings->yLabelLength = wcslen(settings->yLabel);
 	settings->showGrid = true;
-	//hier muessen die Plots rein, wenns mehr sind als 1!
-	//Jetzt automatisiert mit for schleife
+	
+	//workaround, der legendaere NULLplot
 	ScatterPlotSeries *s [PLOTNUM];
 	nullplot = GetDefaultScatterPlotSeriesSettings();
 	nullplot->xs = xs;
@@ -310,6 +310,8 @@ int main(int argc, char* argv[]){
 	nullplot->ysLength = 2;
 	nullplot->linearInterpolation = false;
 	
+	//hier muessen die Plots rein, wenns mehr sind als 1!
+	//Jetzt automatisiert mit for schleife
 	for(int i = 0; i < PLOTNUM; i++){
 		if(i < p_cnt){
 		s[i] = plot[i];
