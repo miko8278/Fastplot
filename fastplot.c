@@ -45,7 +45,6 @@ int main(int argc, char* argv[]){
 	_Bool success;
 	StringReference *errorMessage;
 	double **plotData;
-	double **flippedData;
 	int spalt = 0;
 	int zeil = 0;
 
@@ -87,9 +86,9 @@ int main(int argc, char* argv[]){
 
 		//-p ist fuer das aktivieren eines bestimmten
 		//plottes und dem angeben von optionen:
-		//-p "1 x=0 y=1 color=red ls=solid" entspricht
+		//-p "x=0 y=1 color=red ls=solid" entspricht
 		//Plot 1, x-Werte aus Spalte 0 der csv, y-Werte aus Spalte 1 der csv, rote Farbe, 
-		//linear interpoliert mit fester 
+		//linear interpoliert mit solidem Strich gezeichnet
 		else if(strcmp("-p",argv[i]) == 0){
 			//es ist moeglich 20 verschiedene -p optionen anzugeben...
 			min_p[p_cnt] = 1;
@@ -131,6 +130,7 @@ int main(int argc, char* argv[]){
 		//Nach der helppage beende das Programm erfolgreich
 		return 0;
 	}
+
 
 	//Dateiargument -d
 	if(min_d){
@@ -176,6 +176,7 @@ int main(int argc, char* argv[]){
 					for (int i = 0; i < cnt; i++) free (subtokens[i]);
 					free (subtokens);
 				}
+				//nicht fertig
 				else if(strncmp(tokens[i],"col=",4) == 0){
 					char **subtokens;
 					int cnt;
@@ -185,6 +186,7 @@ int main(int argc, char* argv[]){
 					for (int i = 0; i < cnt; i++) free (subtokens[i]);
 					free (subtokens);
 				}
+				//nicht fertig
 				else if(strncmp(tokens[i],"ls=",2) == 0){
 					char **subtokens;
 					int cnt;
@@ -212,12 +214,7 @@ int main(int argc, char* argv[]){
 	//Alte Test Arrays
 	double xs[] = {0,0}; // :D :D
 	double ys[] = {0,0}; 
-	//double xs [] = {0,1,2,3,4};
-	//double ys [PLOTNUM][5] = {{2, -1, -2, -1, 2},
-	//					{1, -0, -1, -3, 4},
-	//					{3, -1, 0, -2, 3},
-	//					{4, -7, 1, -1, 1},
-	//					{3, -2, 2, -5, 6}};
+
 
 	printf("Spalten:%d Zeilen:%d\n",spalt,zeil);
 	//was ist das...?
@@ -236,10 +233,6 @@ int main(int argc, char* argv[]){
 	for(int i = 0; i < PLOTNUM; i++){
 		plot[i] = GetDefaultScatterPlotSeriesSettings();
 		printf("Plot no: %d  xSpalte: %d  ySpalte: %d \n" ,i,x[i],y[i]);
-		//xs, ys sind die double arrays mit den Punkten. 5 ist die Laenge aktuell.
-		//Wenn man als Laenge bsp 4 eintraegt, dann zeichnet er auch nur 4.
-		//Traegt man mehr ein, so sind alle folgenden Punkte 0 und es sieht richtig komisch aus.
-		//Aktuell ist plotData[zeile][spalte], es muss andersrum
 		
 		//Speicherplatz reservieren fuer eine Spalte
 		//Werte reinpressen, scheiss auf free, programm laeuft nur kurz
@@ -257,7 +250,7 @@ int main(int argc, char* argv[]){
 		plot[i]->ys = ysspalte;
 		plot[i]->ysLength = zeil;
 
-		plot[i]->linearInterpolation = true;
+		plot[i]->linearInterpolation = false;
 		//Wenn linearInterpolation = true, dann gelten alle line settings
 		//wenn false, dann gelten pointType. 
 		plot[i]->pointType = L"circles";
@@ -284,10 +277,10 @@ int main(int argc, char* argv[]){
 	//Wenn autoBoundaries = false, dann muessen folgende 4 settings auskommentiert werden:
 	//pbplot Softwarebug: Wenn die boundaries zu weit ausserhalb von dem sind,
 	//was geplottet wird, dann gibts Speicherzugriffsfehler. FUUUUU
-	//settings->xMax = 10;
-	//settings->xMin = 0;
-	//settings->yMax = 400;
-	//settings->yMin = 0;
+	//settings->xMax = 1000;
+	//settings->xMin = -10;
+	//settings->yMax = 4000;
+	//settings->yMin = -10;
 
 	settings->autoPadding = true;
 	// Wenn autoPadding = false; dann muessen folgende 2 settings auskommentiert werden:
