@@ -11,6 +11,19 @@ mit -d angibt. man kann aber auch x=0 oder jede andere Spalte angeben.
 y muss explizit angeben werden, damit er weiss, was er plotten soll.
 Alle anderen Optionen stehen noch aus.
 
+-p - Optionen für den Plot
+	XAchse:		x[] : int;	Enthält die Spalte mit der verwendeten X-Achse 
+					(Standartmäßig die nullte Zeile)
+	YAchse:		y[] : int;	Enthält die Spalte mit der verwendeten Y-Achse
+	Farbe:
+	LineStyle:
+
+
+-t - Titel des Ganzen
+	min_t : bool;			- True: Es gibt einen Titel
+	min_t_spot : int;		- Argument position des Strings
+	argv[min_t_spot] : str;   	- Inhalt des Arguments
+
 # Fastplot
 Plotting program
 
