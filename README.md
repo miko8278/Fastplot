@@ -1,12 +1,15 @@
 # Aktuelles
 aktuell sollte folgende Eingabe funktionieren.
 ```
-fastplot -d file.csv -p "x=1 y=5 col=red"
+fastplot -d file.csv -p "x=0 y=1 col=red" -p "y=2" -p "y=3"
 ```
 Es koennen maximal files mit 10000 Zeichen Zeilenlaenge gelesen werden.
-Es sollte nun alles plotten, was in der csv drin ist.
-Eins nach dem andern, immer mit spalte 0 als X achse.
 
+Die -p "Optionen" macht jeweils einen neuen Plot zum Plotten auf.
+Standardmaessig wird die x-Achse aus Spalte 0 gezogen der Datei, die man
+mit -d angibt. man kann aber auch x=0 oder jede andere Spalte angeben.
+y muss explizit angeben werden, damit er weiss, was er plotten soll.
+Alle anderen Optionen stehen noch aus.
 
 # Fastplot
 Plotting program
