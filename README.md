@@ -15,8 +15,8 @@ Alle anderen Optionen stehen noch aus.
 	XAchse:		x[] : int;	Enthält die Spalte mit der verwendeten X-Achse 
 					(Standartmäßig die nullte Zeile)
 	YAchse:		y[] : int;	Enthält die Spalte mit der verwendeten Y-Achse
-	Farbe:
-	LineStyle:
+	Farbe:		col[] : char*	Enthaelt den String mit der Farbe
+	LineStyle:	lines[] :char*	Enthaelt den String mit dem linestyle
 
 
 -t "Titel" - Titel des Ganzen
