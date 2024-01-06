@@ -1,6 +1,6 @@
 #include "pbPlots.h"
 #include "supportLib.h"
-#include "string.h"
+#include <string.h>
 
 // Kommentiert viel
 #define PLOTNUM 20
@@ -34,12 +34,16 @@ int main(int argc, char* argv[]){
 	int min_p[PLOTNUM];
 	int p_cnt = 0;
 	int min_p_spot[PLOTNUM];
+	char *colors[PLOTNUM];
+	char *lines[PLOTNUM];
 	//arrays initialisieren
 	for(int h = 0; h < PLOTNUM; h++){
 		min_p[h] = 0;
 		min_p_spot[h] = 0;
 		x[h] = 0;
 		y[h] = 0;
+		colors[h] = NULL;
+		lines[h] = NULL;
 	}
 
 	_Bool success;
@@ -50,10 +54,18 @@ int main(int argc, char* argv[]){
 
 	//Kommandozeilenshit anfang
 	//Hier Scope fuer Kommandozeilenvariablen.
-	_Bool min_h = false;
-	_Bool min_d = false;
+	_Bool min_h = false; //hilfsseite
+	_Bool min_d = false; //dateiname
+	_Bool min_ng = false; //no grid on/off
+	_Bool min_t = false; // titel
+	_Bool min_o = false;
+	_Bool min_xl = false;
+	_Bool min_yl = false;
 	int min_d_spot = 0;
-	
+	int min_t_spot = 0;
+	int min_o_spot = 0;
+	int min_xl_spot = 0;
+	int min_yl_spot = 0;
 
 	//Kommandozeilenargumente abchecken
 	for (int i = 1; i < argc; i++){
@@ -82,7 +94,79 @@ int main(int argc, char* argv[]){
 
 		}
 
+		//-t Titel ; Eingabe des Titelnamens
+		else if(strcmp("-t",argv[i]) == 0){
+			min_t = true;
+			if(strncmp(argv[i+1],"-",1) != 0){
+				printf("%s \n",argv[i+1]);
+				i = i+1;
+				min_t_spot = i;
+				continue;
+			}
+			else{
+				printf("Keine gueltiger Titel angeben\n");
+				printf("Abbruch\n");
+				return 1;
+			}
 
+		}
+
+		//-o Titel ; Eingabe der Ausgangsdatei
+		else if(strcmp("-o",argv[i]) == 0){
+			min_o = true;
+			if(strncmp(argv[i+1],"-",1) != 0){
+				printf("%s \n",argv[i+1]);
+				i = i+1;
+				min_o_spot = i;
+				continue;
+			}
+			else{
+				printf("Keine gueltige Ausgangsdatei angeben\n");
+				printf("Abbruch\n");
+				return 1;
+			}
+
+		}
+
+		//-xl Xlabel 
+		else if(strcmp("-xl",argv[i]) == 0){
+			min_xl = true;
+			if(strncmp(argv[i+1],"-",1) != 0){
+				printf("%s \n",argv[i+1]);
+				i = i+1;
+				min_xl_spot = i;
+				continue;
+			}
+			else{
+				printf("Keine gueltiges Xlabel angeben\n");
+				printf("Abbruch\n");
+				return 1;
+			}
+
+		}
+
+		//-yl Ylabel 
+		else if(strcmp("-yl",argv[i]) == 0){
+			min_yl = true;
+			if(strncmp(argv[i+1],"-",1) != 0){
+				printf("%s \n",argv[i+1]);
+				i = i+1;
+				min_yl_spot = i;
+				continue;
+			}
+			else{
+				printf("Keine gueltiges Ylabel angeben\n");
+				printf("Abbruch\n");
+				return 1;
+			}
+
+		}
+
+
+		//-g fuer grid on/off
+		else if(strcmp("-ng",argv[i]) == 0){
+			min_ng = true;
+		}
 
 		//-p ist fuer das aktivieren eines bestimmten
 		//plottes und dem angeben von optionen:
@@ -119,7 +203,8 @@ int main(int argc, char* argv[]){
 	}
 
 
-	//Hilfsseite -h
+	//Hilfsseite -h 
+	//bitte erweitern mit allen opts
 	if(min_h){
 		printf("Hilfeseite fuer fastplot:\n  Optionen: \n\n");
 		printf("  %-20s%-100s \n","-h","Zeige diese Hilfeseite an \n");
@@ -131,6 +216,31 @@ int main(int argc, char* argv[]){
 		return 0;
 	}
 
+	//-ng no grid
+	if(min_ng){
+		printf("min_ng set\n");
+	}
+
+	//-t Titelname
+	if(min_t){
+		printf("min_t set Inhalt: %s \n",argv[min_t_spot]);
+	}
+
+
+	//-o Ausgangsdatei z.b graph.png
+	if(min_o){
+		printf("min_o set Inhalt %s \n",argv[min_o_spot]);
+	}
+
+	//-xl Xlabel
+	if(min_xl){
+		printf("min_xl set Inhalt %s \n",argv[min_xl_spot]);
+	}
+
+	//-yl Ylabel
+	if(min_yl){
+		printf("min_yl set Inhalt %s \n",argv[min_yl_spot]);
+	}
 
 	//Dateiargument -d
 	if(min_d){
@@ -181,20 +291,23 @@ int main(int argc, char* argv[]){
 					char **subtokens;
 					int cnt;
 					cnt = split(tokens[i],'=',&subtokens);
-					printf("token1c: %s token2c: %s \n",subtokens[0],subtokens[1]);
-					// freeing subtokens 
-					for (int i = 0; i < cnt; i++) free (subtokens[i]);
-					free (subtokens);
+					colors[g] = subtokens[1];
+					printf("token1c: %s token2c: %s \n",subtokens[0],colors[g]);
+					// subtokens nicht free, da wir darauf zugreifen nachher!
+					//	
+					//for (int i = 0; i < cnt; i++) free (subtokens[i]);
+					//free (subtokens);
 				}
 				//nicht fertig
-				else if(strncmp(tokens[i],"ls=",2) == 0){
+				else if(strncmp(tokens[i],"ls=",3) == 0){
 					char **subtokens;
 					int cnt;
 					cnt = split(tokens[i],'=',&subtokens);
-					printf("token1ls: %s token2ls: %s \n",subtokens[0],subtokens[1]);
-					// freeing subtokens 
-					for (int i = 0; i < cnt; i++) free (subtokens[i]);
-					free (subtokens);
+					lines[g] = subtokens[1];
+					printf("token1ls: %s token2ls: %s \n",subtokens[0],lines[g]);
+					// nicht free, wir brauchen sie nachher!
+					//for (int i = 0; i < cnt; i++) free (subtokens[i]);
+					//free (subtokens);
 				}
 		}
 		// freeing tokens 
@@ -233,7 +346,8 @@ int main(int argc, char* argv[]){
 	for(int i = 0; i < PLOTNUM; i++){
 		plot[i] = GetDefaultScatterPlotSeriesSettings();
 		printf("Plot no: %d  xSpalte: %d  ySpalte: %d \n" ,i,x[i],y[i]);
-		
+		printf("Plot no %d  Farbe: %s\n",i,colors[i]);
+		printf("Plot no %d  linestyle: %s\n",i,lines[i]);
 		//Speicherplatz reservieren fuer eine Spalte
 		//Werte reinpressen, scheiss auf free, programm laeuft nur kurz
 		double *ysspalte = malloc(sizeof(double) * zeil);
