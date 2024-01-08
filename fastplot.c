@@ -10,6 +10,7 @@
 int split (const char *txt, char delim, char ***tokens);
 
 
+
 //Liest csv Datei aus.
 //returned ein 2 dim double array, nennen wir es array[x][y]
 //x ist hierbei die Zeile, y ist die Spalte
@@ -30,7 +31,7 @@ int main(int argc, char* argv[]){
 	//PLOTNUM = 20!
 	int x[PLOTNUM];
 	int y[PLOTNUM];
-	int col[PLOTNUM]; 
+	int col[PLOTNUM];
 	int min_p[PLOTNUM];
 	int p_cnt = 0;
 	int min_p_spot[PLOTNUM];
@@ -51,6 +52,25 @@ int main(int argc, char* argv[]){
 	double **plotData;
 	int spalt = 0;
 	int zeil = 0;
+
+	//Farben
+	//Jede Farbe hat einen R, G, und B Wert
+	typedef struct {
+    char sign;  //Um die Farbe nach der Eingabe zu identifizeiren
+                //Fliegt ggf wieder raus, mal schauen wie ich es mache
+	double r;
+	double g;
+	double b;
+	} color;
+
+	//Farben deklariert
+	color black = {'b', 255, 255, 255};
+	color red = {'r', 255, 0, 0};
+	color green = {'g', 0, 255, 0};
+	color blue = {'u', 0, 0, 255};
+	color turquoise = {'t', 48, 213, 200};
+	color orange = {'o', 255, 165, 0};
+	color flesh = {'f', 252, 211, 128};
 
 	//Kommandozeilenshit anfang
 	//Hier Scope fuer Kommandozeilenvariablen.
@@ -128,7 +148,7 @@ int main(int argc, char* argv[]){
 
 		}
 
-		//-xl Xlabel 
+		//-xl Xlabel
 		else if(strcmp("-xl",argv[i]) == 0){
 			min_xl = true;
 			if(strncmp(argv[i+1],"-",1) != 0){
@@ -145,7 +165,7 @@ int main(int argc, char* argv[]){
 
 		}
 
-		//-yl Ylabel 
+		//-yl Ylabel
 		else if(strcmp("-yl",argv[i]) == 0){
 			min_yl = true;
 			if(strncmp(argv[i+1],"-",1) != 0){
@@ -171,12 +191,12 @@ int main(int argc, char* argv[]){
 		//-p ist fuer das aktivieren eines bestimmten
 		//plottes und dem angeben von optionen:
 		//-p "x=0 y=1 color=red ls=solid" entspricht
-		//Plot 1, x-Werte aus Spalte 0 der csv, y-Werte aus Spalte 1 der csv, rote Farbe, 
+		//Plot 1, x-Werte aus Spalte 0 der csv, y-Werte aus Spalte 1 der csv, rote Farbe,
 		//linear interpoliert mit solidem Strich gezeichnet
 		else if(strcmp("-p",argv[i]) == 0){
 			//es ist moeglich 20 verschiedene -p optionen anzugeben...
 			min_p[p_cnt] = 1;
-			
+
 			if(strncmp(argv[i+1],"-",1) != 0){
 				min_p_spot[p_cnt] = i+1;
 				printf("%s \n",argv[min_p_spot[p_cnt]]);
@@ -195,7 +215,7 @@ int main(int argc, char* argv[]){
 
 		//Abbruch, wenn irgendetwas anderes als die oberen
 		//Optionen genannt wurden
-		else{ 
+		else{
 			printf("Unbekanntes Argument %s \n", argv[i]);
 			printf("Abbruch\n");
 			return 1;
@@ -203,14 +223,14 @@ int main(int argc, char* argv[]){
 	}
 
 
-	//Hilfsseite -h 
+	//Hilfsseite -h
 	//bitte erweitern mit allen opts
 	if(min_h){
 		printf("Hilfeseite fuer fastplot:\n  Optionen: \n\n");
 		printf("  %-20s%-100s \n","-h","Zeige diese Hilfeseite an \n");
 		printf("  %-20s%-100s \n","-d Dateiname","Benutze diese Datei als Quelle fuer Plot \n");
 		printf("  %-20s%-100s \n","-p \"Optionen\" ","Optionen sind: x=spaltennum y=spaltennum color=farbe ls=linestyle\n");
-		
+
 
 		//Nach der helppage beende das Programm erfolgreich
 		return 0;
@@ -255,7 +275,7 @@ int main(int argc, char* argv[]){
 	//Plotargument -p
 	//kann bis zu 20 mal verwendet werden. Fuer jeden Plot eines mit Optionen.
 	for(int g = 0; g <= p_cnt; g++){
-		if(min_p[g]){ 
+		if(min_p[g]){
 			printf("min_p[%d] set\n",g);
 
 			char **tokens;
@@ -271,7 +291,7 @@ int main(int argc, char* argv[]){
 					cnt = split(tokens[i],'=',&subtokens);
 					x[g] = (int) strtod(subtokens[1],&spntr);
 					printf("token1x: %s token2x: %d \n",subtokens[0],x[g]);
-					// freeing subtokens 
+					// freeing subtokens
 					for (int i = 0; i < cnt; i++) free (subtokens[i]);
 					free (subtokens);
 				}
@@ -282,7 +302,7 @@ int main(int argc, char* argv[]){
 					cnt = split(tokens[i],'=',&subtokens);
 					y[g] = (int) strtod(subtokens[1],&spntr);
 					printf("token1y: %s token2y: %d \n",subtokens[0],y[g]);
-					// freeing subtokens 
+					// freeing subtokens
 					for (int i = 0; i < cnt; i++) free (subtokens[i]);
 					free (subtokens);
 				}
@@ -294,7 +314,7 @@ int main(int argc, char* argv[]){
 					colors[g] = subtokens[1];
 					printf("token1c: %s token2c: %s \n",subtokens[0],colors[g]);
 					// subtokens nicht free, da wir darauf zugreifen nachher!
-					//	
+					//
 					//for (int i = 0; i < cnt; i++) free (subtokens[i]);
 					//free (subtokens);
 				}
@@ -310,7 +330,7 @@ int main(int argc, char* argv[]){
 					//free (subtokens);
 				}
 		}
-		// freeing tokens 
+		// freeing tokens
 		for (int i = 0; i < count; i++) free (tokens[i]);
 		free (tokens);
 
@@ -326,7 +346,7 @@ int main(int argc, char* argv[]){
 	// PLOT POINTS alt
 	//Alte Test Arrays
 	double xs[] = {0,0}; // :D :D
-	double ys[] = {0,0}; 
+	double ys[] = {0,0};
 
 
 	printf("Spalten:%d Zeilen:%d\n",spalt,zeil);
@@ -366,14 +386,78 @@ int main(int argc, char* argv[]){
 
 		plot[i]->linearInterpolation = false;
 		//Wenn linearInterpolation = true, dann gelten alle line settings
-		//wenn false, dann gelten pointType. 
+		//wenn false, dann gelten pointType.
 		plot[i]->pointType = L"circles";
 		plot[i]->pointTypeLength = wcslen(plot[i]->pointType);
 		plot[i]->lineType = L"solid";
 		plot[i]->lineTypeLength = wcslen(plot[i]->lineType);
 		plot[i]->lineThickness = 2;
-		//irgendwas fuer farbvariation... potentiell geht das kaputt...
-		plot[i]->color = CreateRGBColor((0.2*i), (0.1*i)+0.5, (0.05*i)+0.2);	
+
+		//Farbe des Plots
+		printf("Ausgewählte Farbe ist %s\n", colors[i]);
+		int r, g, b; // Zwischenspeicher der Farbwerte
+		if (colors[i] == NULL){ //Wurde eine Farbe angegeben?
+                //Wenn nein, wird schwarz geladen
+            r = black.r;
+            g = black.g;
+            b = black.b;
+
+            plot[i]->color = CreateRGBColor(r, g, b);
+
+            printf("Standardfarbe Schwarz fuer Plot %d\n", i+1);
+		}
+		else if (colors != NULL) {    //Auswahl der gewuenschten Farbe
+            switch (*colors[i]){
+            case 'b':         //Schwarz
+                r = black.r;
+                g = black.g;
+                b = black.b;
+                printf("Farbe Schwarz fuer Plot %d\n", i+1);
+                break;
+            case 'r':         //Rot
+                r = red.r;
+                g = red.g;
+                b = red.b;
+                printf("Farbe Rot fuer Plot %d\n", i+1);
+                break;
+            case 'g':         //Gruen
+                r = green.r;
+                g = green.g;
+                b = green.b;
+                printf("Farbe Gruen fuer Plot %d\n", i+1);
+                break;
+            case 'u':         //Blau
+                r = blue.r;
+                g = blue.g;
+                b = blue.b;
+                printf("SFarbe Blau fuer Plot %d\n", i+1);
+                break;
+            case 't':         //Turquoise
+                r = turquoise.r;
+                g = turquoise.g;
+                b = turquoise.b;
+                printf("SFarbe Turquoise fuer Plot %d\n", i+1);
+                break;
+            case 'o':         //Orange
+                r = orange.r;
+                g = orange.g;
+                b = orange.b;
+                printf("SFarbe Orange fuer Plot %d\n", i+1);
+                break;
+            case 'f':         //Flesh
+                r = flesh.r;
+                g = flesh.g;
+                b = flesh.b;
+                printf("SFarbe Fleisch fuer Plot %d\n", i+1);
+                break;
+            default:        //Default
+                r = black.r;
+                g = black.g;
+                b = black.b;
+                printf("Kuerzel fuer Plot %d nicht erkannt. Standartfarbe ist Schwarz\n", i+1);
+            }
+		plot[i]->color = CreateRGBColor(r, g, b);
+		}
 	}
 
 	//
@@ -407,7 +491,7 @@ int main(int argc, char* argv[]){
 	settings->yLabel = L"Dies soll ein Y label sein"; // Funktioniert bei mir nicht
 	settings->yLabelLength = wcslen(settings->yLabel);
 	settings->showGrid = true;
-	
+
 	//workaround, der legendaere NULLplot
 	ScatterPlotSeries *s [PLOTNUM];
 	nullplot = GetDefaultScatterPlotSeriesSettings();
@@ -416,7 +500,7 @@ int main(int argc, char* argv[]){
 	nullplot->ys = ys;
 	nullplot->ysLength = 2;
 	nullplot->linearInterpolation = false;
-	
+
 	//hier muessen die Plots rein, wenns mehr sind als 1!
 	//Jetzt automatisiert mit for schleife
 	for(int i = 0; i < PLOTNUM; i++){
@@ -451,9 +535,9 @@ int main(int argc, char* argv[]){
 	//success2 = DrawScatterPlotFromSettings(canvasReference2, settings2, errorMessage);
 	//miko8278:DrawText funktioniert bei mir
 	//miko8278:DrawTextUpwards ist eine Funktion, die den Text um 90 grad drehend darstellen
-	//soll. Funktioniert bei mir nicht 
+	//soll. Funktioniert bei mir nicht
 	//DrawText(canvasReference->image,800.0,800.0,L"TEST",4, CreateRGBColor(0,0,0));
-	
+
 
 	//miko8278: DrawImageonImage verhaelt sich komisch bei mir
 	//DrawImageOnImage(canvasReference->image, canvasReference2->image, 0, 0);
@@ -540,7 +624,7 @@ double **readCSV(char *dateiname, int *spalte, int *zeile){
 				printf("Zeile No. %d;Elemente: %d : %s ", i,newcnt,buffer);
 				for (int j = 0; j < cnt; j++) free (tokenf[j]);
 				free (tokenf);
-			}   
+			}
 		}
 		printf("Final result: Spalten: %d Zeilen: %d \n",cnt, i);
 		//Uebergabe der Spalten und Zeilenwerte, Plot braucht es auch.
@@ -574,7 +658,7 @@ double **readCSV(char *dateiname, int *spalte, int *zeile){
 				newcnt = split(buffer,';',&tokenf);
 				for(int n = 0; n < newcnt; n++){
 					//Wir muessen den string noch in
-					//ein double 'casten'. 
+					//ein double 'casten'.
 					//endpntr enthaelt den reststring, der nicht double ist
 					//sollte in unserem Falle immer leer sein.
 					//Koennte potentiell mal fuer Einheiten verwendet werden.
@@ -585,7 +669,7 @@ double **readCSV(char *dateiname, int *spalte, int *zeile){
 				//printf("Zeile No. %d;Elemente: %d : %s ", m,newcnt,buffer);
 				for (int j = 0; j < cnt; j++) free (tokenf[j]);
 				free (tokenf);
-			}   
+			}
 		}
 		fclose(filePointer);
 
