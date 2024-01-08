@@ -17,6 +17,7 @@ Alle anderen Optionen stehen noch aus.
 	YAchse:		y[] : int;	Enthält die Spalte mit der verwendeten Y-Achse
 	Farbe:		col[] : char*	Enthaelt den String mit der Farbe
 	LineStyle:	lines[] :char*	Enthaelt den String mit dem linestyle
+	Interpol:	in : int	0=false 1=true
 
 
 -t "Titel" - Titel des Ganzen
@@ -42,6 +43,8 @@ Alle anderen Optionen stehen noch aus.
 	min_yl: bool
 	min_yl_spot
 	argv[min_yl_spot]
+
+
 
 ```
 # Fastplot
