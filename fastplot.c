@@ -466,7 +466,7 @@ int main(int argc, char* argv[]){
 
 	//Wenn zeichnen erfolgreich war, erstelle png.
 	if(success){
-        const char filetype[4]= ".png";   //Png Endung
+        const char filetype[5]= ".png";   //Png Endung
         char *stdname = "FastPlotOutput.png";
         char *filename = malloc(sizeof(char)*150); //Speicherreservierung für Dateinamen
         if (min_o) {                //Ein Name ist gewünscht
