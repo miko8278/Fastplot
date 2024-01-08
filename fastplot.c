@@ -230,6 +230,11 @@ int main(int argc, char* argv[]){
 	//-o Ausgangsdatei z.b graph.png
 	if(min_o){
 		printf("min_o set Inhalt %s \n",argv[min_o_spot]);
+        if (strlen(argv[min_o_spot]) > 100){    //Kontrolle auf Namenslänge
+            printf("Dateiname ist zu lang\n");
+            printf("Abbruch\n");
+        return 1;
+				}
 	}
 
 	//-xl Xlabel
@@ -463,7 +468,7 @@ int main(int argc, char* argv[]){
 	if(success){
         const char filetype[4]= ".png";   //Png Endung
         char *stdname = "FastPlotOutput.png";
-        char *filename;
+        char *filename = malloc(sizeof(char)*150); //Speicherreservierung für Dateinamen
         if (min_o) {                //Ein Name ist gewünscht
             filename = argv[min_o_spot];
             strcat(filename, filetype);
