@@ -395,7 +395,7 @@ int main(int argc, char* argv[]){
 
 		//Farbe des Plots
 		printf("Ausgewählte Farbe ist %s\n", colors[i]);
-		int r, g, b; // Zwischenspeicher der Farbwerte
+		double r, g, b; // Zwischenspeicher der Farbwerte
 		if (colors[i] == NULL){ //Wurde eine Farbe angegeben?
                 //Wenn nein, wird schwarz geladen
             r = black.r;
