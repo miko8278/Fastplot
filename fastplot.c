@@ -318,7 +318,22 @@ int main(int argc, char* argv[]){
 	}
 	//Kommandozeilenshit ENDE
 
+    //Erstellen der Labels
+    wchar_t xLabel[1000];
+    wchar_t yLabel[1000];
 
+if(min_xl) {
+mbstowcs(xLabel, argv[min_xl_spot],10000);
+}
+else {
+mbstowcs(xLabel, "X-Achse",10000);
+}
+if(min_yl) {
+mbstowcs(yLabel, argv[min_yl_spot],10000);
+}
+else {
+mbstowcs(yLabel, "Y-Achse",10000);
+}
 
 	//HIER geht pbPlots los!
 	printf("Okay, ich plotte mal!\n");
@@ -402,9 +417,9 @@ int main(int argc, char* argv[]){
 	//settings->yPadding = 100;
 	settings->title = L"Titel von dem Ganzen";
 	settings->titleLength = wcslen(settings->title);
-	settings->xLabel = L"Dies ist ein Xlabel"; // miko8278: Ich hab das Gefuehl, dass es an einer komischen Stelle auftaucht
+	settings->xLabel = xLabel; // miko8278: Ich hab das Gefuehl, dass es an einer komischen Stelle auftaucht
 	settings->xLabelLength = wcslen(settings->xLabel);
-	settings->yLabel = L"Dies soll ein Y label sein"; // Funktioniert bei mir nicht
+	settings->yLabel = yLabel; // Funktioniert bei mir nicht
 	settings->yLabelLength = wcslen(settings->yLabel);
 	settings->showGrid = true;
 	
