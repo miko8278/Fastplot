@@ -64,7 +64,7 @@ int main(int argc, char* argv[]){
 	} color;
 
 	//Farben deklariert
-	color black = {'b', 255, 255, 255};
+	color black = {'b', 0, 0, 0};
 	color red = {'r', 255, 0, 0};
 	color green = {'g', 0, 255, 0};
 	color blue = {'u', 0, 0, 255};
@@ -399,7 +399,6 @@ int main(int argc, char* argv[]){
 		plot[i]->lineThickness = 2;
 
 		//Farbe des Plots
-		printf("Ausgewählte Farbe ist %s\n", colors[i]);
 		double r, g, b; // Zwischenspeicher der Farbwerte
 		if (colors[i] == NULL){ //Wurde eine Farbe angegeben?
                 //Wenn nein, wird schwarz geladen
@@ -409,7 +408,7 @@ int main(int argc, char* argv[]){
 
             plot[i]->color = CreateRGBColor(r, g, b);
 
-            printf("Standardfarbe Schwarz fuer Plot %d\n", i+1);
+            printf("Standardfarbe Schwarz fuer Plot %d.\n", i+1);
 		}
 		else if (colors != NULL) {    //Auswahl der gewuenschten Farbe
             switch (*colors[i]){
@@ -417,51 +416,51 @@ int main(int argc, char* argv[]){
                 r = black.r;
                 g = black.g;
                 b = black.b;
-                printf("Farbe Schwarz fuer Plot %d\n", i+1);
+                printf("Farbe Schwarz fuer Plot %d.\n", i+1);
                 break;
             case 'r':         //Rot
                 r = red.r;
                 g = red.g;
                 b = red.b;
-                printf("Farbe Rot fuer Plot %d\n", i+1);
+                printf("Farbe Rot fuer Plot %d.\n", i+1);
                 break;
             case 'g':         //Gruen
                 r = green.r;
                 g = green.g;
                 b = green.b;
-                printf("Farbe Gruen fuer Plot %d\n", i+1);
+                printf("Farbe Gruen fuer Plot %d.\n", i+1);
                 break;
             case 'u':         //Blau
                 r = blue.r;
                 g = blue.g;
                 b = blue.b;
-                printf("SFarbe Blau fuer Plot %d\n", i+1);
+                printf("Farbe Blau fuer Plot %d.\n", i+1);
                 break;
             case 't':         //Turquoise
                 r = turquoise.r;
                 g = turquoise.g;
                 b = turquoise.b;
-                printf("SFarbe Turquoise fuer Plot %d\n", i+1);
+                printf("Farbe Turquoise fuer Plot %d.\n", i+1);
                 break;
             case 'o':         //Orange
                 r = orange.r;
                 g = orange.g;
                 b = orange.b;
-                printf("SFarbe Orange fuer Plot %d\n", i+1);
+                printf("Farbe Orange fuer Plot %d.\n", i+1);
                 break;
             case 'f':         //Flesh
                 r = flesh.r;
                 g = flesh.g;
                 b = flesh.b;
-                printf("SFarbe Fleisch fuer Plot %d\n", i+1);
+                printf("Farbe Fleisch fuer Plot %d.\n", i+1);
                 break;
             default:        //Default
                 r = black.r;
                 g = black.g;
                 b = black.b;
-                printf("Kuerzel fuer Plot %d nicht erkannt. Standartfarbe ist Schwarz\n", i+1);
+                printf("Kuerzel fuer Plot %d nicht erkannt. Standartfarbe ist Schwarz.\n", i+1);
             }
-		plot[i]->color = CreateRGBColor(r, g, b);
+		plot[i]->color = CreateRGBColor((r/255), (g/255), (b/255));
 		}
 	}
 
