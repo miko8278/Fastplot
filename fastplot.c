@@ -250,6 +250,11 @@ int main(int argc, char* argv[]){
 	//-o Ausgangsdatei z.b graph.png
 	if(min_o){
 		printf("min_o set Inhalt %s \n",argv[min_o_spot]);
+        if (strlen(argv[min_o_spot]) > 100){    //Kontrolle auf Namenslänge
+            printf("Dateiname ist zu lang\n");
+            printf("Abbruch\n");
+        return 1;
+				}
 	}
 
 	//-xl Xlabel
@@ -545,8 +550,19 @@ int main(int argc, char* argv[]){
 
 	//Wenn zeichnen erfolgreich war, erstelle png.
 	if(success){
+        const char filetype[5]= ".png";   //Png Endung
+        char *stdname = "FastPlotOutput.png";
+        char *filename = malloc(sizeof(char)*150); //Speicherreservierung für Dateinamen
+        if (min_o) {                //Ein Name ist gewünscht
+            filename = argv[min_o_spot];
+            strcat(filename, filetype);
+        }
+        else {                      //Kein Name ist gewünscht
+            filename = stdname;
+        }
+        printf("%s\n", filename);
 		ByteArray *pngdata = ConvertToPNG(canvasReference->image);
-		WriteToFile(pngdata, "example2.png");
+		WriteToFile(pngdata, filename);
 		DeleteImage(canvasReference->image);
 	}else{
 		fprintf(stderr, "Error: ");
