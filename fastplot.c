@@ -46,7 +46,7 @@ int main(int argc, char* argv[]){
 		y[h] = 0;
 		colors[h] = NULL;
 		lines[h] = NULL;
-		in_set[h] = 0;
+		in_set[h] = 1;
 	}
 
 	_Bool success;
