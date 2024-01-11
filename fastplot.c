@@ -231,6 +231,7 @@ int main(int argc, char* argv[]){
 		printf("  %-20s%-100s \n","-d Dateiname","Benutze diese Datei als Quelle fuer Plot \n");
 		printf("  %-20s%-100s \n","-p \"Optionen\" ","Optionen sind: x=spaltennum y=spaltennum color=farbe ls=linestyle\n");
 		printf("  %-20s%-100s \n","-t", "Titel vom Plot \n");
+		printf("  %-20s%-100s \n","-ng", "hide grid\n");
 
 
 		//Nach der helppage beende das Programm erfolgreich
