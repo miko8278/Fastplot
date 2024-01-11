@@ -230,6 +230,7 @@ int main(int argc, char* argv[]){
 		printf("  %-20s%-100s \n","-h","Zeige diese Hilfeseite an \n");
 		printf("  %-20s%-100s \n","-d Dateiname","Benutze diese Datei als Quelle fuer Plot \n");
 		printf("  %-20s%-100s \n","-p \"Optionen\" ","Optionen sind: x=spaltennum y=spaltennum color=farbe ls=linestyle\n");
+		printf("  %-20s%-100s \n","-t", "Titel vom Plot \n");
 
 
 		//Nach der helppage beende das Programm erfolgreich
@@ -244,6 +245,11 @@ int main(int argc, char* argv[]){
 	//-t Titelname
 	if(min_t){
 		printf("min_t set Inhalt: %s \n",argv[min_t_spot]);
+		 if (strlen(argv[min_t_spot]) > 100){    //Kontrolle auf Namenslänge
+            printf("Titel vom Plot ist zu lang\n");
+            printf("Abbruch\n");
+        return 1;
+				}
 	}
 
 
@@ -488,8 +494,20 @@ int main(int argc, char* argv[]){
 	// Wenn autoPadding = false; dann muessen folgende 2 settings auskommentiert werden:
 	//settings->xPadding = 100;
 	//settings->yPadding = 100;
-	settings->title = L"Titel von dem Ganzen";
-	settings->titleLength = wcslen(settings->title);
+
+	// Titel
+	if (min_t){  //wenn Titel angegeben
+        printf("title of plot is %s\n", argv[min_t_spot]);
+        wchar_t plotname[1000];
+        mbstowcs(plotname, argv[min_t_spot], 10000);  // string in wstring umwandeln
+        settings->title = plotname;
+        settings->titleLength = wcslen(settings->title);
+	}
+	else {  //kein Titel angegeben
+        settings->title = L"xy Plot"; // Standardtitel
+        settings->titleLength = wcslen(settings->title);
+	}
+
 	settings->xLabel = L"Dies ist ein Xlabel"; // miko8278: Ich hab das Gefuehl, dass es an einer komischen Stelle auftaucht
 	settings->xLabelLength = wcslen(settings->xLabel);
 	settings->yLabel = L"Dies soll ein Y label sein"; // Funktioniert bei mir nicht
