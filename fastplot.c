@@ -33,6 +33,7 @@ int main(int argc, char* argv[]){
 	int y[PLOTNUM];
 	int col[PLOTNUM];
 	int min_p[PLOTNUM];
+	int in_set[PLOTNUM];
 	int p_cnt = 0;
 	int min_p_spot[PLOTNUM];
 	char *colors[PLOTNUM];
@@ -45,6 +46,7 @@ int main(int argc, char* argv[]){
 		y[h] = 0;
 		colors[h] = NULL;
 		lines[h] = NULL;
+		in_set[h] = 0;
 	}
 
 	_Bool success;
@@ -246,7 +248,7 @@ int main(int argc, char* argv[]){
 	//-t Titelname
 	if(min_t){
 		printf("min_t set Inhalt: %s \n",argv[min_t_spot]);
-		 if (strlen(argv[min_t_spot]) > 100){    //Kontrolle auf Namenslänge
+		 if (strlen(argv[min_t_spot]) > 100){    //Kontrolle auf Namenslï¿½nge
             printf("Titel vom Plot ist zu lang\n");
             printf("Abbruch\n");
         return 1;
@@ -257,7 +259,7 @@ int main(int argc, char* argv[]){
 	//-o Ausgangsdatei z.b graph.png
 	if(min_o){
 		printf("min_o set Inhalt %s \n",argv[min_o_spot]);
-        if (strlen(argv[min_o_spot]) > 100){    //Kontrolle auf Namenslänge
+        if (strlen(argv[min_o_spot]) > 100){    //Kontrolle auf Namenslï¿½nge
             printf("Dateiname ist zu lang\n");
             printf("Abbruch\n");
         return 1;
@@ -318,13 +320,24 @@ int main(int argc, char* argv[]){
 					for (int i = 0; i < cnt; i++) free (subtokens[i]);
 					free (subtokens);
 				}
+				else if(strncmp(tokens[i],"in=",3) == 0){
+					char **subtokens;
+					char *spntr;
+					int cnt;
+					cnt = split(tokens[i],'=',&subtokens);
+					in_set[g] = (int) strtod(subtokens[1],&spntr);
+					printf("token1 in: %s token2 in: %d \n",subtokens[0],in_set[g]);
+					// freeing subtokens
+					for (int i = 0; i < cnt; i++) free (subtokens[i]);
+					free (subtokens);
+				}
 				//nicht fertig
 				else if(strncmp(tokens[i],"col=",4) == 0){
 					char **subtokens;
 					int cnt;
 					cnt = split(tokens[i],'=',&subtokens);
 					colors[g] = subtokens[1];
-					printf("token1c: %s token2c: %s \n",subtokens[0],colors[g]);
+					printf("token1 col: %s token2 col: %s \n",subtokens[0],colors[g]);
 					// subtokens nicht free, da wir darauf zugreifen nachher!
 					//
 					//for (int i = 0; i < cnt; i++) free (subtokens[i]);
@@ -336,11 +349,13 @@ int main(int argc, char* argv[]){
 					int cnt;
 					cnt = split(tokens[i],'=',&subtokens);
 					lines[g] = subtokens[1];
-					printf("token1ls: %s token2ls: %s \n",subtokens[0],lines[g]);
+					printf("token1 ls: %s token2 ls: %s \n",subtokens[0],lines[g]);
 					// nicht free, wir brauchen sie nachher!
 					//for (int i = 0; i < cnt; i++) free (subtokens[i]);
 					//free (subtokens);
 				}
+		
+
 		}
 		// freeing tokens
 		for (int i = 0; i < count; i++) free (tokens[i]);
@@ -395,8 +410,13 @@ int main(int argc, char* argv[]){
 		//immer unterschiedliche Y-Achsen.
 		plot[i]->ys = ysspalte;
 		plot[i]->ysLength = zeil;
-
-		plot[i]->linearInterpolation = false;
+		printf("inset %d \n",in_set[i]);
+		if(in_set[i] == 0){
+			plot[i]->linearInterpolation = false;
+		}
+		else{
+			plot[i]->linearInterpolation = true;
+		}
 		//Wenn linearInterpolation = true, dann gelten alle line settings
 		//wenn false, dann gelten pointType.
 		plot[i]->pointType = L"circles";
@@ -578,12 +598,12 @@ int main(int argc, char* argv[]){
 	if(success){
         const char filetype[5]= ".png";   //Png Endung
         char *stdname = "FastPlotOutput.png";
-        char *filename = malloc(sizeof(char)*150); //Speicherreservierung für Dateinamen
-        if (min_o) {                //Ein Name ist gewünscht
+        char *filename = malloc(sizeof(char)*150); //Speicherreservierung fï¿½r Dateinamen
+        if (min_o) {                //Ein Name ist gewï¿½nscht
             filename = argv[min_o_spot];
             strcat(filename, filetype);
         }
-        else {                      //Kein Name ist gewünscht
+        else {                      //Kein Name ist gewï¿½nscht
             filename = stdname;
         }
         printf("%s\n", filename);
@@ -608,7 +628,6 @@ int main(int argc, char* argv[]){
 
 
 //stackoverflowcode zum splitten von strings
-//versteh ich 50%
 //willkommen in der c hoelle
 int split (const char *txt, char delim, char ***tokens)
 {
