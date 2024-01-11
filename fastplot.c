@@ -512,7 +512,15 @@ int main(int argc, char* argv[]){
 	settings->xLabelLength = wcslen(settings->xLabel);
 	settings->yLabel = L"Dies soll ein Y label sein"; // Funktioniert bei mir nicht
 	settings->yLabelLength = wcslen(settings->yLabel);
-	settings->showGrid = true;
+
+	// Settings: grid on/off
+	if (min_ng){
+        settings->showGrid = false; // no grid
+	}
+	else {
+        settings->showGrid = true;
+	}
+
 
 	//workaround, der legendaere NULLplot
 	ScatterPlotSeries *s [PLOTNUM];
