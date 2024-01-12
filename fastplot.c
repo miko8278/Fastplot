@@ -235,11 +235,21 @@ int main(int argc, char* argv[]){
 	//-xl Xlabel
 	if(min_xl){
 		printf("min_xl set Inhalt %s \n",argv[min_xl_spot]);
+        if (strlen(argv[min_xl_spot]) > 100) {    //Kontrolle auf Namensl�nge
+            printf("X-Label vom Plot ist zu lang\n");
+            printf("Abbruch\n");
+            return 1;
+        }
 	}
 
 	//-yl Ylabel
 	if(min_yl){
 		printf("min_yl set Inhalt %s \n",argv[min_yl_spot]);
+        if (strlen(argv[min_yl_spot]) > 100) {    //Kontrolle auf Namensl�nge
+            printf("Y-Label vom Plot ist zu lang\n");
+            printf("Abbruch\n");
+            return 1;
+        }
 	}
 
 	//Dateiargument -d
