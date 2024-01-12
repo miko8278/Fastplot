@@ -231,7 +231,15 @@ int main(int argc, char* argv[]){
 		printf("Hilfeseite fuer fastplot:\n  Optionen: \n\n");
 		printf("  %-20s%-100s \n","-h","Zeige diese Hilfeseite an \n");
 		printf("  %-20s%-100s \n","-d Dateiname","Benutze diese Datei als Quelle fuer Plot \n");
-		printf("  %-20s%-100s \n","-p \"Optionen\" ","Optionen sind: x=spaltennum y=spaltennum color=farbe ls=linestyle\n");
+		printf("  %-20s%-100s \n","-p \"Optionen\" ","Optionen sind:\n");
+		printf("  %-20s%-100s \n","sx=", "spaltennum \n");
+		printf("  %-20s%-100s \n","y=", "spaltennum \n");
+		printf("  %-20s%-100s \n","colour=", "farbe \n");
+		printf("  %-20s%-100s \n","b", "Schwarz \n");
+        printf("  %-20s%-100s \n","b", "Schwarz \n");
+        printf("  %-20s%-100s \n","b", "Schwarz \n");
+        printf("  %-20s%-100s \n","b", "Schwarz \n");
+		printf("  %-20s%-100s \n","ls=", "linestyle \n");
 		printf("  %-20s%-100s \n","-t", "Titel vom Plot \n");
 		printf("  %-20s%-100s \n","-ng", "hide grid\n");
 
@@ -354,7 +362,7 @@ int main(int argc, char* argv[]){
 					//for (int i = 0; i < cnt; i++) free (subtokens[i]);
 					//free (subtokens);
 				}
-		
+
 
 		}
 		// freeing tokens
