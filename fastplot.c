@@ -564,9 +564,9 @@ mbstowcs(yLabel, "Y-Achse",10000); //standart label
         settings->titleLength = wcslen(settings->title);
 	}
 
-	settings->xLabel = L"Dies ist ein Xlabel"; // miko8278: Ich hab das Gefuehl, dass es an einer komischen Stelle auftaucht
+	settings->xLabel = xLabel; // miko8278: Ich hab das Gefuehl, dass es an einer komischen Stelle auftaucht
 	settings->xLabelLength = wcslen(settings->xLabel);
-	settings->yLabel = L"Dies soll ein Y label sein"; // Funktioniert bei mir nicht
+	settings->yLabel = yLabel; // Funktioniert bei mir nicht
 	settings->yLabelLength = wcslen(settings->yLabel);
 
 	// Settings: grid on/off
