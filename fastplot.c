@@ -331,18 +331,20 @@ int main(int argc, char* argv[]){
     //Erstellen der Labels
     wchar_t xLabel[1000];
     wchar_t yLabel[1000];
-
+//print vom x-Label
 if(min_xl) {
 mbstowcs(xLabel, argv[min_xl_spot],10000);
 }
 else {
-mbstowcs(xLabel, "X-Achse",10000);
+mbstowcs(xLabel, "X-Achse",10000); //standart label
 }
+
+//print vom y-Label
 if(min_yl) {
 mbstowcs(yLabel, argv[min_yl_spot],10000);
 }
 else {
-mbstowcs(yLabel, "Y-Achse",10000);
+mbstowcs(yLabel, "Y-Achse",10000); //standart label
 }
 
 	//HIER geht pbPlots los!
