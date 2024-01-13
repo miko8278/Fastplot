@@ -277,11 +277,21 @@ int main(int argc, char* argv[]){
 	//-xl Xlabel
 	if(min_xl){
 		printf("min_xl set Inhalt %s \n",argv[min_xl_spot]);
+        if (strlen(argv[min_xl_spot]) > 100) {    //Kontrolle auf Namensl�nge
+            printf("X-Label vom Plot ist zu lang\n");
+            printf("Abbruch\n");
+            return 1;
+        }
 	}
 
 	//-yl Ylabel
 	if(min_yl){
 		printf("min_yl set Inhalt %s \n",argv[min_yl_spot]);
+        if (strlen(argv[min_yl_spot]) > 100) {    //Kontrolle auf Namensl�nge
+            printf("Y-Label vom Plot ist zu lang\n");
+            printf("Abbruch\n");
+            return 1;
+        }
 	}
 
 	//Dateiargument -d
@@ -373,7 +383,24 @@ int main(int argc, char* argv[]){
 	}
 	//Kommandozeilenshit ENDE
 
+    //Erstellen der Labels
+    wchar_t xLabel[1000];
+    wchar_t yLabel[1000];
+//print vom x-Label
+if(min_xl) {
+mbstowcs(xLabel, argv[min_xl_spot],10000);
+}
+else {
+mbstowcs(xLabel, "X-Achse",10000); //standart label
+}
 
+//print vom y-Label
+if(min_yl) {
+mbstowcs(yLabel, argv[min_yl_spot],10000);
+}
+else {
+mbstowcs(yLabel, "Y-Achse",10000); //standart label
+}
 
 	//HIER geht pbPlots los!
 	printf("Okay, ich plotte mal!\n");
