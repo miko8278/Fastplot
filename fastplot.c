@@ -80,9 +80,9 @@ int main(int argc, char* argv[]){
 	_Bool min_d = false; //dateiname
 	_Bool min_ng = false; //no grid on/off
 	_Bool min_t = false; // titel
-	_Bool min_o = false;
-	_Bool min_xl = false;
-	_Bool min_yl = false;
+	_Bool min_o = false; //outputname blah.png
+	_Bool min_xl = false; // x label
+	_Bool min_yl = false; // y label
 	int min_d_spot = 0;
 	int min_t_spot = 0;
 	int min_o_spot = 0;
@@ -228,20 +228,20 @@ int main(int argc, char* argv[]){
 	//Hilfsseite -h
 	//bitte erweitern mit allen opts
 	if(min_h){
-		printf("Hilfeseite fuer fastplot:\n  Optionen: \n\n");
-		printf("  %-20s%-100s \n","-h","Zeige diese Hilfeseite an \n");
-		printf("  %-20s%-100s \n","-d Dateiname","Benutze diese Datei als Quelle fuer Plot \n");
-		printf("  %-20s%-100s \n","-p \"Optionen\" ","Optionen sind:\n");
-		printf("  %-20s%-100s \n","sx=", "spaltennum \n");
-		printf("  %-20s%-100s \n","y=", "spaltennum \n");
-		printf("  %-20s%-100s \n","colour=", "farbe \n");
-		printf("  %-20s%-100s \n","b", "Schwarz \n");
-        printf("  %-20s%-100s \n","b", "Schwarz \n");
-        printf("  %-20s%-100s \n","b", "Schwarz \n");
-        printf("  %-20s%-100s \n","b", "Schwarz \n");
-		printf("  %-20s%-100s \n","ls=", "linestyle \n");
-		printf("  %-20s%-100s \n","-t", "Titel vom Plot \n");
-		printf("  %-20s%-100s \n","-ng", "hide grid\n");
+		printf("Hilfeseite fuer fastplot:\n");
+		printf("Beispiele:\n");
+		printf("fastplot -d file.csv -p \"x=0 y=1 col=r in=0\" -p \"x=0 y=2 col=b in=1\" -o output -ng -t \"Bester Titel\" -xl \"Bestes XLabel\" \n\n");
+		printf("Optionen: \n\n");
+		printf("  %-20s%-100s \n\n","-h","Zeige diese Hilfeseite an ");
+		printf("  %-20s%-100s \n\n","-d \"Dateiname\"","Benutze diese Datei als Quelle fuer Plot ");
+		printf("  %-20s%-100s \n","-p \"Optionen\" ","Optionen sind:");
+		printf("  %-20s%-100s \n","", "x=\"spaltennum\" ");
+		printf("  %-20s%-100s \n","", "y=\"spaltennum\" ");
+		printf("  %-20s%-100s \n","", "col=\"Farbe\"");
+		printf("  %-20s%-100s \n","", "(Farben: rot=r, schwarz=b, blau=u, gruen=g, tuerkis=t, orange=o, rosa=f)");
+		printf("  %-20s%-100s \n\n","", "in=1 oder in=0");
+		printf("  %-20s%-100s \n\n","-t", "Titel vom Plot");
+		printf("  %-20s%-100s \n\n","-ng", "Grid verstecken");
 
 
 		//Nach der helppage beende das Programm erfolgreich
@@ -454,7 +454,7 @@ mbstowcs(yLabel, "Y-Achse",10000); //standart label
 		}
 		//Wenn linearInterpolation = true, dann gelten alle line settings
 		//wenn false, dann gelten pointType.
-		plot[i]->pointType = L"circles";
+		plot[i]->pointType = L"dots";
 		plot[i]->pointTypeLength = wcslen(plot[i]->pointType);
 		plot[i]->lineType = L"solid";
 		plot[i]->lineTypeLength = wcslen(plot[i]->lineType);
