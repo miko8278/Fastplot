@@ -45,7 +45,11 @@ Optionen:
 
   -t                  Titel vom Plot                                                                                       
 
-  -ng                 Grid verstecken  
+  -ng                 Grid verstecken
+
+  -xl "Xlabel"        X-Label
+
+  -yl "Ylabel"        Y-Label  
 
 ```
 
@@ -55,4 +59,13 @@ fastplot -d file.csv -p "y=1"
 ```
 
 This should plot a black sine-curve.
-Do not forget the "" after the -p option or it won't parse the plotoptions correctly.
+Do not forget to use "" around the options after the -p option or it won't parse the plotoptions correctly.
+
+This is a more complicated example:
+``` fastplot -d file.csv -p "x=0 y=1 col=r in=0" -p "x=0 y=2 col=b in=1" -o output -ng -t "Bester Titel" -xl "Bestes XLabel"  ```
+This creates 2 plots: The first one plots column 1 (y) of the data against column 0 (x) of the data. The color is red and the interpolation is turned on.
+The second plot plots column 2 of the data against column 0 of the data. The color is black and interpolation ist turned off.
+The data is read from file.csv.
+Grid is turned off, the title is "Bester Title" and the xlabel is "Bestes Xlabel".
+
+Please note that Ylabel right now is fundamentally broken in the pbplot libary, even though it is implemented as option.
