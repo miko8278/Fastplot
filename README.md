@@ -1,52 +1,3 @@
-# Aktuelles
-aktuell sollte folgende Eingabe funktionieren.
-```
-fastplot -d file.csv -p "x=0 y=1 col=red" -p "y=2" -p "y=3"
-```
-Es koennen maximal files mit 10000 Zeichen Zeilenlaenge gelesen werden.
-
-Die -p "Optionen" macht jeweils einen neuen Plot zum Plotten auf.
-Standardmaessig wird die x-Achse aus Spalte 0 gezogen der Datei, die man
-mit -d angibt. man kann aber auch x=0 oder jede andere Spalte angeben.
-y muss explizit angeben werden, damit er weiss, was er plotten soll.
-Alle anderen Optionen stehen noch aus.
-```
--p "Optionen" - Optionen für den Plot
-	XAchse:		x[] : int;	Enthält die Spalte mit der verwendeten X-Achse 
-					(Standartmäßig die nullte Zeile)
-	YAchse:		y[] : int;	Enthält die Spalte mit der verwendeten Y-Achse
-	Farbe:		col[] : char*	Enthaelt den String mit der Farbe
-	LineStyle:	lines[] :char*	Enthaelt den String mit dem linestyle
-	Interpol:	in : int	0=false 1=true
-
-
--t "Titel" - Titel des Ganzen
-	min_t : bool;			- True: Es gibt einen Titel
-	min_t_spot : int;		- Argument position des Strings
-	argv[min_t_spot] : str;   	- Inhalt des Arguments
-
--ng 	- grid an/aus				
-	min_ng: bool; 			- true: es gibt kein grid
-
-
--o "Ausgangsname" - Name der Ausgangs png
-	min_o: bool;			-es gibt eine gewuenschte bezeichnung
-	min_o_spot: int;		-an dieser stelle
-	argv[min_o_spot]		-wie sie heisst steht hier
-
--xl "NAme des Xlabels" - Xlabel
-	min_xl: bool
-	min_xl_spot
-	argv[min_xl_spot]
-
--yl "Name des Ylabels"
-	min_yl: bool
-	min_yl_spot
-	argv[min_yl_spot]
-
-
-
-```
 # Fastplot
 Plotting program
 
@@ -68,3 +19,40 @@ Finally you can compile and link fastplot in one step:
 
 This creates a executable called fastplot.
 
+## How to use fastplot
+Get fastplot with:
+```git clone https://github.com/miko8278/Fastplot.git ```
+
+First try ```fastplot -h``` to generate following helppage:
+
+```
+Hilfeseite fuer fastplot:
+Beispiele:
+fastplot -d file.csv -p "x=0 y=1 col=r in=0" -p "x=0 y=2 col=b in=1" -o output -ng -t "Bester Titel" -xl "Bestes XLabel" 
+
+Optionen: 
+
+  -h                  Zeige diese Hilfeseite an                                                                            
+
+  -d "Dateiname"      Benutze diese Datei als Quelle fuer Plot                                                             
+
+  -p "Optionen"       Optionen sind:                                                                                       
+                      x="spaltennum"                                                                                       
+                      y="spaltennum"                                                                                       
+                      col="Farbe"                                                                                          
+                      (Farben: rot=r, schwarz=b, blau=u, gruen=g, tuerkis=t, orange=o, rosa=f)                             
+                      in=1 oder in=0                                                                                       
+
+  -t                  Titel vom Plot                                                                                       
+
+  -ng                 Grid verstecken  
+
+```
+
+As a first example try using:
+```
+fastplot -d file.csv -p "y=1"
+```
+
+This should plot a black sine-curve.
+Do not forget the "" after the -p option or it won't parse the plotoptions correctly.
